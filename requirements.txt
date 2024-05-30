@@ -49,5 +49,4 @@ Pillow
 psutil
 # pytgcalls==3.0.0.dev24
 # git+https://github.com/XhaidarX00/pytgcall
-googletrans==4.0.0-rc1
 emoji
