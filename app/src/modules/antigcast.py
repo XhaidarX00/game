@@ -88,18 +88,23 @@ async def convertascci(client, message):
 
 
 
+import emoji
+
 # Satu baris regex yang menggabungkan semua kondisi
 delete_message_regex = re.compile(r'[^\x00-\x7F]|(.)\1{2,}|(\b\w+\b\s+){4,}\b\w+\b')
 
 def should_delete_message(text):
+    if len(text.split(" ") == 1) and emoji.is_emoji(text):
+        return False
+    
     if len(text.split(" ")) >= 3:
         return True
     
     # Ambil kata pertama dari pesan
-    first_word = re.match(r'\b\w+\b', text)
+    # first_word = text.split(" ")[0]
 
     # Jika kata pertama menggunakan font default, jangan hapus pesan
-    if first_word and not re.search(r'[^\x00-\x7F]|(.)\1{2,}', first_word.group()):
+    if text.split(" ")[0] and not re.search(r'[^\x00-\x7F]', text.split(" ")[0].group()):
         return False
 
     # Periksa semua kondisi dalam satu regex
@@ -133,7 +138,7 @@ async def handle_anti_gcast(client, message):
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
             await asyncio.sleep(1)
-            await client.delete_messages(chat_id, notif.id)
+            return await client.delete_messages(chat_id, notif.id)
             
-    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
+    # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
     
