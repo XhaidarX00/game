@@ -94,7 +94,7 @@ import emoji
 delete_message_regex = re.compile(r'[^\x00-\x7F]|(.)\1{2,}|(\b\w+\b\s+){4,}\b\w+\b')
 
 def should_delete_message(text):
-    if len(text.split(" ") == 1) and emoji.is_emoji(text):
+    if len(text.split(" ")) == 1 and emoji.is_emoji(text):
         return False
     
     if len(text.split(" ")) >= 3:
