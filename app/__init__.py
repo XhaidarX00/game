@@ -1,34 +1,34 @@
 import asyncio
 from pyrogram import filters, Client
-from pyrogram.types import CallbackQuery
-import vertexai
-from vertexai.generative_models._generative_models import HarmCategory, HarmBlockThreshold
-from vertexai.preview.generative_models import GenerativeModel
+# from pyrogram.types import CallbackQuery
+# import vertexai
+# from vertexai.generative_models._generative_models import HarmCategory, HarmBlockThreshold
+# from vertexai.preview.generative_models import GenerativeModel
 
 from app.config import *
 
-# Initialize Vertex AI with project and location
-vertexai.init(project=project_id, location=location)
+# # Initialize Vertex AI with project and location
+# vertexai.init(project=project_id, location=location)
 
-# Configuration settings for the generative model
-generation_config = {
-    "temperature": 0.7,
-    "top_p": 1,
-    "top_k": 1,
-    "max_output_tokens": 2048,
-}
+# # Configuration settings for the generative model
+# generation_config = {
+#     "temperature": 0.7,
+#     "top_p": 1,
+#     "top_k": 1,
+#     "max_output_tokens": 2048,
+# }
 
-# Safety settings to control harmful content blocking thresholds
-safety_settings = {
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-}
+# # Safety settings to control harmful content blocking thresholds
+# safety_settings = {
+#     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+#     HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+#     HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+#     HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+# }
 
-# Initialize generative models
-model = GenerativeModel("gemini-pro", generation_config=generation_config, safety_settings=safety_settings)
-vision_model = GenerativeModel("gemini-pro-vision", generation_config=generation_config, safety_settings=safety_settings)
+# # Initialize generative models
+# model = GenerativeModel("gemini-pro", generation_config=generation_config, safety_settings=safety_settings)
+# vision_model = GenerativeModel("gemini-pro-vision", generation_config=generation_config, safety_settings=safety_settings)
 
 
 
