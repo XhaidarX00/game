@@ -10,7 +10,7 @@ from ..helpers.string import escape_invalid_curly_brackets, ChatType, build_keyb
 from ..helpers.parser import escape_markdown, mention_html
 from ..helpers.kbhelper import ikb
 from ..helpers.cmd_sender import send_cmd
-from app import ubot, bot, OWNER_ID
+from app import bot, OWNER_ID
 
 
 
@@ -27,7 +27,7 @@ async def cari_file(client, message):
 
 
 
-@ubot.on_message(filters.command("cm", "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command("cm", "") & filters.user(OWNER_ID))
 async def create_foto(client, message):
     chat_id = message.chat.id
     members = "DAFTAR MEMBERS : \n\n"
@@ -48,7 +48,7 @@ async def create_foto(client, message):
     # await bot.send_message(OWNER_ID, f"TOTAL : {len(members)}")
     
     
-@ubot.on_message(filters.command("cf", "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command("cf", "") & filters.user(OWNER_ID))
 async def create_foto(client, message):
     chat_id = message.chat.id
     
@@ -138,155 +138,155 @@ def path_foto():
 
 id_chat_before = None
 
-# @bot.on_chat_member_updated(filters.group, group = 4)
-# async def member_has_joined(client, member: ChatMemberUpdated):
-#     global id_chat_before, photo_image_path
+@bot.on_chat_member_updated(filters.group, group = 2)
+async def member_has_joined(client, member: ChatMemberUpdated):
+    global id_chat_before, photo_image_path
     
-#     if (
-#         member.new_chat_member
-#         and member.new_chat_member.status not in {CMS.BANNED, CMS.LEFT, CMS.RESTRICTED}
-#         and not member.old_chat_member
-#     ):
-#         pass
-#     else:
-#         return
+    if (
+        member.new_chat_member
+        and member.new_chat_member.status not in {CMS.BANNED, CMS.LEFT, CMS.RESTRICTED}
+        and not member.old_chat_member
+    ):
+        pass
+    else:
+        return
     
-#     if member.new_chat_member:
-#         user = member.new_chat_member.user 
-#         joined = str(member.new_chat_member.joined_date )
-#         # filename = "member.new_chat_member"
-#         # await write_to_file(str(member), filename)
-#         # await bot.send_document(OWNER_ID, filename)
-#     else:
-#         user = member.from_user
-#         # filename = "member.from_user"
-#         # await write_to_file(str(member), filename)
-#         # await bot.send_document(OWNER_ID, filename)
+    if member.new_chat_member:
+        user = member.new_chat_member.user 
+        joined = str(member.new_chat_member.joined_date )
+        # filename = "member.new_chat_member"
+        # await write_to_file(str(member), filename)
+        # await bot.send_document(OWNER_ID, filename)
+    else:
+        user = member.from_user
+        # filename = "member.from_user"
+        # await write_to_file(str(member), filename)
+        # await bot.send_document(OWNER_ID, filename)
     
-#     # if member.new_chat_member:
-#     #     await client.send_message(OWNER_ID, member.new_chat_member)
-#     # else:
-#     #     await client.send_message(OWNER_ID, member.from_user)
+    # if member.new_chat_member:
+    #     await client.send_message(OWNER_ID, member.new_chat_member)
+    # else:
+    #     await client.send_message(OWNER_ID, member.from_user)
     
-#     # return await client.send_message(OWNER_ID, user)
+    # return await client.send_message(OWNER_ID, user)
     
 
-#     try:
-#         me = await client.get_me()
-#         if user.id == me.id:
-#             return
-#         if user.is_bot:
-#             return  # ignore bots
-#     except ChatAdminRequired:
-#         return
+    try:
+        me = await client.get_me()
+        if user.id == me.id:
+            return
+        if user.is_bot:
+            return  # ignore bots
+    except ChatAdminRequired:
+        return
     
-#     if joined:
-#         oo = """WELCOME TO {chatname}
-# ╭━━━━━━━━━━━━━━━━━
-# ┞◈ Waktu : {joined}
-# ┞◈ Nama  : {first}
-# ┟◈ ID         : {id}
-# ┟◈ Une      : {username}
-# ╰━━━━━━━━━━━━━━━━━
-#  ◉ 🄴🄽🄹🄾🅈🅈🅈 🄸🅃 ◉
-# """
+    if joined:
+        oo = """WELCOME TO {chatname}
+╭━━━━━━━━━━━━━━━━━
+┞◈ Waktu : {joined}
+┞◈ Nama  : {first}
+┟◈ ID         : {id}
+┟◈ Une      : {username}
+╰━━━━━━━━━━━━━━━━━
+ ◉ 🄴🄽🄹🄾🅈🅈🅈 🄸🅃 ◉
+"""
 
-# # Disini Tempat Sharing atau nongkrong santuy sambil cerita, So enjooyy it !!! 
+# Disini Tempat Sharing atau nongkrong santuy sambil cerita, So enjooyy it !!! 
     
-#     else:
-#         oo = """WELCOME TO {chatname}
-# ╭━━━━━━━━━━━━━━━━━
-# ┞◈ Nama  : {first}
-# ┟◈ ID         : {id}
-# ┟◈ Une      : {username}
-# ╰━━━━━━━━━━━━━━━━━
-#  ◉ 🄴🄽🄹🄾🅈🅈🅈 🄸🅃 ◉
-# """
-#     if user.photo:
-#         foto_user = user.photo.big_file_id
-#         foto_user = await client.download_media(foto_user)
-#     else:
-#         foto_user = path_foto()
+    else:
+        oo = """WELCOME TO {chatname}
+╭━━━━━━━━━━━━━━━━━
+┞◈ Nama  : {first}
+┟◈ ID         : {id}
+┟◈ Une      : {username}
+╰━━━━━━━━━━━━━━━━━
+ ◉ 🄴🄽🄹🄾🅈🅈🅈 🄸🅃 ◉
+"""
+    if user.photo:
+        foto_user = user.photo.big_file_id
+        foto_user = await client.download_media(foto_user)
+    else:
+        foto_user = path_foto()
         
-#     name = user.first_name
-#     if user.last_name:
-#         name += f" {user.last_name}"
+    name = user.first_name
+    if user.last_name:
+        name += f" {user.last_name}"
     
-#     if user.username:
-#         un = f"@{user.username}"
-#     else:
-#         un = "No Username"
+    if user.username:
+        un = f"@{user.username}"
+    else:
+        un = "No Username"
         
-#     resized_overlay_image = await resize_and_create_circle_mask(foto_user)
-#     foto_edit = await merge_images(name, un, resized_overlay_image)
-#     UwU = foto_edit
-#     mtype = 3
-#     parse_words = [
-#         "joined",
-#         "first",
-#         "last",
-#         "fullname",
-#         "username",
-#         "mention",
-#         "id",
-#         "chatname",
-#     ]
+    resized_overlay_image = await resize_and_create_circle_mask(foto_user)
+    foto_edit = await merge_images(name, un, resized_overlay_image)
+    UwU = foto_edit
+    mtype = 3
+    parse_words = [
+        "joined",
+        "first",
+        "last",
+        "fullname",
+        "username",
+        "mention",
+        "id",
+        "chatname",
+    ]
     
-#     if joined:
-#         hmm = await escape_mentions_using_curly_brackets_wl(member, True, oo, parse_words, joined)
-#     else:
-#         hmm = await escape_mentions_using_curly_brackets_wl(member, True, oo, parse_words)
+    if joined:
+        hmm = await escape_mentions_using_curly_brackets_wl(member, True, oo, parse_words, joined)
+    else:
+        hmm = await escape_mentions_using_curly_brackets_wl(member, True, oo, parse_words)
     
-#     hmm += "\n[MUSEUM](buttonurl:https://t.me/sinikedifams)"
-#     tek, button = await parse_button(hmm)
+    hmm += "\n[MUSEUM](buttonurl:https://t.me/sinikedifams)"
+    tek, button = await parse_button(hmm)
     
-#     # await bot.send_message(OWNER_ID, f"{tek} {button}")
+    # await bot.send_message(OWNER_ID, f"{tek} {button}")
     
-#     button = await build_keyboard(button)
-#     button = ikb(button) if button else None
+    button = await build_keyboard(button)
+    button = ikb(button) if button else None
     
-#     if "%%%" in tek:
-#         filter_reply = tek.split("%%%")
-#         teks = choice(filter_reply)
-#     else:
-#         teks = tek
+    if "%%%" in tek:
+        filter_reply = tek.split("%%%")
+        teks = choice(filter_reply)
+    else:
+        teks = tek
     
-#     if id_chat_before:
-#         try:
-#             await client.delete_messages(member.chat.id, int(id_chat_before))
-#         except RPCError:
-#             pass
+    if id_chat_before:
+        try:
+            await client.delete_messages(member.chat.id, int(id_chat_before))
+        except RPCError:
+            pass
         
-#     if not teks:
-#         teks = "Hallo {first}, welcome to {chatname} Kawannn ..."
+    if not teks:
+        teks = "Hallo {first}, welcome to {chatname} Kawannn ..."
     
-#     # await bot.send_message(OWNER_ID, teks)
+    # await bot.send_message(OWNER_ID, teks)
     
-#     try:
-#         if not UwU:
-#             jj = await client.send_message(
-#                 member.chat.id,
-#                 text=teks,
-#                 reply_markup=button,
-#                 disable_web_page_preview=True,
-#             )
-#         elif UwU:
-#             jj = await (await send_cmd(client, mtype))(
-#                 member.chat.id,
-#                 UwU,
-#                 caption=teks,
-#                 reply_markup=button,
-#             )
+    try:
+        if not UwU:
+            jj = await client.send_message(
+                member.chat.id,
+                text=teks,
+                reply_markup=button,
+                disable_web_page_preview=True,
+            )
+        elif UwU:
+            jj = await (await send_cmd(client, mtype))(
+                member.chat.id,
+                UwU,
+                caption=teks,
+                reply_markup=button,
+            )
 
-#         if jj:
-#             id_chat_before = int(jj.id)
+        if jj:
+            id_chat_before = int(jj.id)
             
-#     except RPCError as e:
-#         await bot.send_message(OWNER_ID, str(e))
+    except RPCError as e:
+        await bot.send_message(OWNER_ID, str(e))
         
-#         os.remove(foto_user)
-#         os.remove(foto_edit)
-#         return
+        os.remove(foto_user)
+        os.remove(foto_edit)
+        return
     
-#     os.remove(foto_user)
-#     os.remove(foto_edit)
+    os.remove(foto_user)
+    os.remove(foto_edit)
