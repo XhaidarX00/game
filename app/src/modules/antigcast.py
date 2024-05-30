@@ -87,14 +87,12 @@ async def convertascci(client, message):
     return await message.reply(f"<b>Berhasil membebaskan {user_mention}</b>")
 
 
-import re
 
 # Satu baris regex yang menggabungkan semua kondisi
 delete_message_regex = re.compile(r'[^\x00-\x7F]|(.)\1{2,}|(\b\w+\b\s+){4,}\b\w+\b')
 
 def should_delete_message(text):
-    
-    if len(text.split()) >= 4:
+    if len(text.split(" ")) >= 4:
         return False
     
     # Ambil kata pertama dari pesan
@@ -112,6 +110,11 @@ def should_delete_message(text):
 
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=1)
 async def handle_anti_gcast(client, message):
+    if message.forward_sender_name:
+        chat_id = message.chat.id
+        message_id = message.id
+        await client.delete_messages(chat_id, message_id)
+        
     if message.from_user.id:
         chat_id = message.chat.id
         message_text = message.text
@@ -121,6 +124,6 @@ async def handle_anti_gcast(client, message):
         if len(is_admin) == 0:
             async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
                 is_admin.append(member.user.id)
-
-        if (user_id not in is_admin and should_delete_message(message_text)) or message.forward_sender_name:
+        
+        if user_id not in is_admin and should_delete_message(message_text):
             await client.delete_messages(chat_id, message_id)

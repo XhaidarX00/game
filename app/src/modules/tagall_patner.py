@@ -108,7 +108,7 @@ Menu Bantuan
     """
     return help_message
 
-@bot.on_message(filters.command('helpp') & filters.user(OWNER_ID))
+@bot.on_message(filters.command('help') & filters.user(OWNER_ID))
 async def help_menu(client: Client, message: Message):
     """
     Mengirimkan menu bantuan ke pengguna saat perintah /help dipanggil.

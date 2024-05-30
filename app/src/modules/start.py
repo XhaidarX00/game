@@ -3,11 +3,8 @@ from app import bot, OWNER_ID
 
 @bot.on_message(filters.command("startgem"))
 async def handle_start_command(client, message):
-    
     name_tamu = message.from_user.first_name
-    
     text = f"""Halo yang {name_tamu}! Saya Darma 🤖, Silahkan klik /help untuk melihat menu bantuan saya..!"""
-    
     await client.send_message(message.from_user.id, text)
 
 
