@@ -92,8 +92,8 @@ async def convertascci(client, message):
 delete_message_regex = re.compile(r'[^\x00-\x7F]|(.)\1{2,}|(\b\w+\b\s+){4,}\b\w+\b')
 
 def should_delete_message(text):
-    if len(text.split(" ")) >= 4:
-        return False
+    if len(text.split(" ")) >= 3:
+        return True
     
     # Ambil kata pertama dari pesan
     first_word = re.match(r'\b\w+\b', text)
@@ -115,14 +115,11 @@ async def handle_anti_gcast(client, message):
     chat_id = message.chat.id
     message_text = message.text
     message_id = message.id
-    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text}")
     
     if message.forward_sender_name:
-        message_id = message.id
         return await client.delete_messages(chat_id, message_id)
         
     if message.from_user.id:
-        chat_id = message.chat.id
         user_id = message.from_user.id
         name = message.from_user.first_name
         
@@ -137,4 +134,6 @@ async def handle_anti_gcast(client, message):
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
             await asyncio.sleep(1)
             await client.delete_messages(chat_id, notif.id)
+            
+    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
     
