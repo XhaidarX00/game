@@ -1,0 +1,149 @@
+from html import escape
+from typing import List
+from pyrogram.enums import ChatType
+from pyrogram.types import Message
+from .parser import escape_markdown
+from re import compile as compile_re
+
+
+BTN_URL_REGEX = compile_re(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
+
+async def parse_button(text: str):
+    """Parse button from text."""
+    markdown_note = text
+    prev = 0
+    note_data = ""
+    buttons = []
+    for match in BTN_URL_REGEX.finditer(markdown_note):
+        # Check if btnurl is escaped
+        n_escapes = 0
+        to_check = match.start(1) - 1
+        while to_check > 0 and markdown_note[to_check] == "\\":
+            n_escapes += 1
+            to_check -= 1
+
+        # if even, not escaped -> create button
+        if n_escapes % 2 == 0:
+            # create a thruple with button label, url, and newline status
+            buttons.append((match.group(2), match.group(3), bool(match.group(4))))
+            note_data += markdown_note[prev : match.start(1)]
+            prev = match.end(1)
+        # if odd, escaped -> move along
+        else:
+            note_data += markdown_note[prev:to_check]
+            prev = match.start(1) - 1
+    else:
+        note_data += markdown_note[prev:]
+    return note_data, buttons
+
+
+async def build_keyboard(buttons):
+    """Build keyboards from provided buttons."""
+    keyb = []
+    for btn in buttons:
+        if btn[-1] and keyb:
+            keyb[-1].append((btn[0], btn[1], "url"))
+        else:
+            keyb.append([(btn[0], btn[1], "url")])
+
+    return keyb
+
+
+async def escape_invalid_curly_brackets(text: str, valids: List[str]) -> str:
+    new_text = ""
+    idx = 0
+    while idx < len(text):
+        if text[idx] == "{":
+            if idx + 1 < len(text) and text[idx + 1] == "{":
+                idx += 2
+                new_text += "{{{{"
+                continue
+            success = False
+            for v in valids:
+                if text[idx:].startswith("{" + v + "}"):
+                    success = True
+                    break
+            if success:
+                new_text += text[idx : idx + len(v) + 2]
+                idx += len(v) + 2
+                continue
+            new_text += "{{"
+
+        elif text[idx] == "}":
+            if idx + 1 < len(text) and text[idx + 1] == "}":
+                idx += 2
+                new_text += "}}}}"
+                continue
+            new_text += "}}"
+
+        else:
+            new_text += text[idx]
+        idx += 1
+
+    return new_text
+
+
+async def escape_mentions_using_curly_brackets(
+    m: Message,
+    text: str,
+    parse_words: list,
+) -> str:
+    if m.chat.type in [ChatType.SUPERGROUP, ChatType.GROUP, ChatType.CHANNEL]:
+        chat_name = escape(m.chat.title)
+    else:
+        chat_name = escape(m.from_user.first_name)
+    teks = await escape_invalid_curly_brackets(text, parse_words)
+    if teks:
+        teks = teks.format(
+            first=escape(m.from_user.first_name),
+            last=escape(m.from_user.last_name or m.from_user.first_name),
+            mention=m.from_user.mention,
+            username=(
+                "@" + (await escape_markdown(escape(m.from_user.username)))
+                if m.from_user.username
+                else m.from_user.mention
+            ),
+            fullname=" ".join(
+                [
+                    escape(m.from_user.first_name),
+                    escape(m.from_user.last_name),
+                ]
+                if m.from_user.last_name
+                else [escape(m.from_user.first_name)],
+            ),
+            chatname=chat_name,
+            id=m.from_user.id,
+        )
+    else:
+        teks = ""
+
+    return teks
+
+
+async def parse_button(text: str):
+    """Parse button from text."""
+    markdown_note = text
+    prev = 0
+    note_data = ""
+    buttons = []
+    for match in BTN_URL_REGEX.finditer(markdown_note):
+        # Check if btnurl is escaped
+        n_escapes = 0
+        to_check = match.start(1) - 1
+        while to_check > 0 and markdown_note[to_check] == "\\":
+            n_escapes += 1
+            to_check -= 1
+
+        # if even, not escaped -> create button
+        if n_escapes % 2 == 0:
+            # create a thruple with button label, url, and newline status
+            buttons.append((match.group(2), match.group(3), bool(match.group(4))))
+            note_data += markdown_note[prev : match.start(1)]
+            prev = match.end(1)
+        # if odd, escaped -> move along
+        else:
+            note_data += markdown_note[prev:to_check]
+            prev = match.start(1) - 1
+    else:
+        note_data += markdown_note[prev:]
+    return note_data, buttons

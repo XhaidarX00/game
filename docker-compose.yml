@@ -1,0 +1,5 @@
+services:
+  myapp:
+    build: .
+    container_name: mdar
+    restart: always
