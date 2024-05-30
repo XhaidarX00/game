@@ -108,18 +108,25 @@ def should_delete_message(text):
 
     return False
 
+
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=1)
 async def handle_anti_gcast(client, message):
+    chat_id = message.chat.id
+    message_text = message.text
+    message_id = message.id
+    
+    await client.send_message()
+    
     if message.forward_sender_name:
-        chat_id = message.chat.id
         message_id = message.id
-        await client.delete_messages(chat_id, message_id)
+        return await client.delete_messages(chat_id, message_id)
         
     if message.from_user.id:
         chat_id = message.chat.id
-        message_text = message.text
-        message_id = message.id
         user_id = message.from_user.id
+        name = message.from_user.first_name
+        
+        mention = await mention_html(name, user_id)
 
         if len(is_admin) == 0:
             async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
@@ -127,3 +134,6 @@ async def handle_anti_gcast(client, message):
         
         if user_id not in is_admin and should_delete_message(message_text):
             await client.delete_messages(chat_id, message_id)
+            await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+    
+    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text}")
