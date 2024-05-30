@@ -108,6 +108,7 @@ def should_delete_message(text):
 
     return False
 
+import asyncio
 
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot)
 async def handle_anti_gcast(client, message):
@@ -133,5 +134,7 @@ async def handle_anti_gcast(client, message):
         
         if user_id not in is_admin and should_delete_message(message_text):
             await client.delete_messages(chat_id, message_id)
-            await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+            notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+            await asyncio.sleep(1)
+            await client.delete_messages(chat_id, notif.id)
     
