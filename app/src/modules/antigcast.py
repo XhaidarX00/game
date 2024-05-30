@@ -109,13 +109,12 @@ def should_delete_message(text):
     return False
 
 
-@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=1)
+@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot)
 async def handle_anti_gcast(client, message):
     chat_id = message.chat.id
     message_text = message.text
     message_id = message.id
-    
-    await client.send_message()
+    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text}")
     
     if message.forward_sender_name:
         message_id = message.id
@@ -136,4 +135,3 @@ async def handle_anti_gcast(client, message):
             await client.delete_messages(chat_id, message_id)
             await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
     
-    await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text}")

@@ -138,7 +138,7 @@ def path_foto():
 
 id_chat_before = None
 
-@bot.on_chat_member_updated(filters.group, group = 2)
+@bot.on_chat_member_updated(filters.group)
 async def member_has_joined(client, member: ChatMemberUpdated):
     global id_chat_before, photo_image_path
     
