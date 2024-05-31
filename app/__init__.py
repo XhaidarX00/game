@@ -7,6 +7,7 @@ from pyrogram import filters, Client
 
 from pyromod import listen
 from app.config import *
+from app.database.udb import udb
 
 # # Initialize Vertex AI with project and location
 # vertexai.init(project=project_id, location=location)

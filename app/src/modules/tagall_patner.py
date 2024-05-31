@@ -9,10 +9,11 @@
 # """
 
 import asyncio
+import ast
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 # from pyrogram.enums import ChatType
-from app import bot, OWNER_ID
+from app import bot, OWNER_ID, udb
 
 user_ids_parter = [OWNER_ID]
 list_partner = {}
@@ -33,51 +34,72 @@ def capitalize_message(message: str) -> str:
 
 # Menambahkan dan Menghapus User Patner
 
-@bot.on_message(filters.command('addutg'))
+@bot.on_message(filters.command('addutg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
     if not message.reply_to_message:
         await message.reply_text("<b>Gunakan Format :</b> /addtg Balas ke pesan ")
         return
     new_utg = message.reply_to_message.from_user
-    if new_utg in user_ids_parter:
-        await message.reply_text(f"{new_utg.first_name} sudah ada dipatner.")
+    if new_utg.id in user_ids_parter:
+        return await message.reply_text(f"{new_utg.first_name} sudah ada dipatner.")
     else:
         user_ids_parter.append(new_utg.id)
+        if not udb.exsist("USERTAGALLPATNER"):
+            udb.create("USERTAGALLPATNER", str(user_ids_parter))
+        else:
+            udb.update("USERTAGALLPATNER", str(user_ids_parter))
         await message.reply_text(f"{new_utg.first_name} berhasil ditambahkan.")
 
 
-@bot.on_message(filters.command('remutg'))
+
+@bot.on_message(filters.command('remutg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
-    if not message.reply_to_message:
-        await message.reply_text("<b>Gunakan Format :</b> /remtg Balas ke pesan ")
-        return
-    del_utg = message.reply_to_message.from_user
-    if del_utg not in user_ids_parter:
-        await message.reply_text(f"{del_utg.first_name} belum ada dipatner.")
+    user_id = None
+    name = None
+    if message.reply_to_message:
+        user_id = message.reply_to_message.from_user.id
+        name = message.reply_to_message.from_user.first_name
     else:
-        user_ids_parter.remove(del_utg.id)
-        await message.reply_text(f"{del_utg.first_name} berhasil dihapus.")
+        user_id = message.command[1]
+        try:
+            name = await bot.get_users(user_id)
+        except:
+            name = await mention_html("SIANU", user_id)
+        
+    if user_id not in user_ids_parter:
+        return await message.reply_text(f"{name} belum ada dipatner.")
+    else:
+        user_ids_parter.remove(user_id)
+        if udb.exsist("GCTAGALLPATNER"):
+            udb.update("GCTAGALLPATNER", str(user_ids_parter))
+        else:
+            await message.reply_text(f"Users Gc Patner Kosong!!")
+            
+        await message.reply_text(f"{name} berhasil dihapus.")
         
 
 # Menambahkan dan Menghapus Gc Patner
 
-@bot.on_message(filters.command('addtg'))
+@bot.on_message(filters.command('addtg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
     chat_id = message.chat.id
     namagc = message.chat.title
-    if int(message.from_user.id) != OWNER_ID:
-        return
-        
+    
     new_tg = capitalize_message(namagc)
     if new_tg in list_partner:
-        await message.reply_text("Gc Patner sudah ada.")
+        return await message.reply_text("Gc Patner sudah ada.")
     else:
         list_partner[new_tg] = chat_id
+        if not udb.exsist("GCTAGALLPATNER"):
+            udb.create("GCTAGALLPATNER", str(list_partner))
+        else:
+            udb.update("GCTAGALLPATNER", str(list_partner))
+            
         await message.reply_text(f"Gc Patner '{new_tg}' berhasil ditambahkan.")
     
-    # await bot.send_message(OWNER_ID, "tagallmasuk")
 
-@bot.on_message(filters.command('deltg'))
+
+@bot.on_message(filters.command('deltg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Gunakan: /deltg Nama GC Patner")
@@ -85,9 +107,14 @@ async def add_tagall(client: Client, message: Message):
     del_tg = " ".join(message.command[1:])
     del_tg = capitalize_message(del_tg)
     if del_tg not in list_partner:
-        await message.reply_text("Gc Patner tidak ditemukan.")
+        return await message.reply_text("Gc Patner tidak ditemukan.")
     else:
         del list_partner[del_tg]
+        if udb.exsist("GCTAGALLPATNER"):
+            udb.update("GCTAGALLPATNER", str(list_partner))
+        else:
+            await message.reply_text(f"List Gc Patner Kosong!!")
+            
         await message.reply_text(f"Gc Patner '{del_tg}' berhasil dihapus.")
 
 
@@ -105,11 +132,16 @@ def send_help_menu():
 Menu Bantuan
 
 /dtg - Menampilkan List GC patner.
-/addtg Nama GC - Menambah GC patner.
-/remtg Nama GC - Menghapus GC patner.
-/addutg Balas Pesan - Menambah user patner bot akses.
-/remutg Balas Pesan - Menghapus user patner bot akses.
     """
+#         help_message = """
+# Menu Bantuan
+
+# /dtg - Menampilkan List GC patner.
+# /addtg Nama GC - Menambah GC patner.
+# /remtg Nama GC - Menghapus GC patner.
+# /addutg Balas Pesan - Menambah user patner bot akses.
+# /remutg Balas Pesan - Menghapus user patner bot akses.
+#     """
     return help_message
 
 @bot.on_message(filters.command('help'))
@@ -134,16 +166,46 @@ async def help_menu(client: Client, message: Message):
 async def show_categories(client: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
-    if len(list_partner) == 0:
-        return await bot.send_message(chat_id, "List Patner Kosong!!")
+    name = message.from_user.first_name
+    if len(list_partner) == 0 or len(user_ids_parter) == 0:
+        list_partner_ = udb.read("GCTAGALLPATNER")
+        list_partner_ = ast.literal_eval(list_partner_)
+        if len(list_partner_):
+            return await bot.send_message(chat_id, "List Patner Kosong!!")
+        else:
+            ids_users = udb.read("USERTAGALLPATNER")
+            ids_users = ast.literal_eval(ids_users)
+            user_ids_parter += ids_users
     
     message_text, keyboard = send_data_gc_patner()
+    user_mention_display = await (name, user_id)
+    text = f"Hai 👋 {user_mention_display}\n"
+    text += message_text
     await client.send_message(
         chat_id=message.chat.id,
-        text=message_text,
+        text=text,
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
+# Menampilkan users Tagall
+@bot.on_message(filters.command('dutg') & filters.user(OWNER_ID))
+async def show_categories(client: Client, message: Message):
+    chat_id = message.chat.id
+    text = "Daftar Users Tg Patner\n"
+    for index, user in enumerate(user_ids_parter, start = 1):
+        try:
+            user_ = await bot.get_users(user)
+            user_mention = user_.mention
+            user_id = user_.id
+        except:
+            user_mention = await mention_html("SIANU", user)
+            user_id = user
+            
+        text += f"{index}. {user_mention} [{user_id}]\n"
+    
+    await bot.send_message(chat_id, text)
+    
+    
 
 # Menampilkan List Tagall
 @bot.on_message(filters.command('cancel'))
