@@ -1,12 +1,12 @@
-"""
-flow:
-1. regis user partner
-2. display list tag all
-3. if click scrape member chat
-4. input text
-5. tagall in 3 minutes
-6. limit 3 tagall in one day
-"""
+# """
+# flow:
+# 1. regis user partner
+# 2. display list tag all
+# 3. if click scrape member chat
+# 4. input text
+# 5. tagall in 3 minutes
+# 6. limit 3 tagall in one day
+# """
 
 import asyncio
 from pyrogram import Client, filters, enums
@@ -74,7 +74,8 @@ async def add_tagall(client: Client, message: Message):
     else:
         list_partner[new_tg] = chat_id
         await message.reply_text(f"Gc Patner '{new_tg}' berhasil ditambahkan.")
-
+    
+    await bot.send_message(OWNER_ID, "tagallmasuk")
 
 @bot.on_message(filters.command('deltg'))
 async def add_tagall(client: Client, message: Message):
@@ -306,3 +307,12 @@ async def paginate_categories(client: Client, callback_query):
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=enums.ParseMode.MARKDOWN
     )
+    
+    
+
+@bot.on_message(filters.command("tagalltest"))
+async def handler_tagall_test(client, message):
+    chat_id = message.chat.id
+    
+    await message.reply("Pesan Masuk")
+    await bot.send_message(chat_id, "tagallmasuk")
