@@ -141,7 +141,9 @@ async def handle_anti_gcast(client, message):
                 is_admin.append(member.user.id)
         
         text = split_text_and_emoji(message_text)
-        await bot.send_message(OWNER_ID, text)
+        if not text:
+            return
+        
         if user_id not in is_admin and should_delete_message(text):
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
