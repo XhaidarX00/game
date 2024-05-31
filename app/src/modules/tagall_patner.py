@@ -362,7 +362,7 @@ async def handler_tagall_gc(client: Client, callback_query):
         chats_member[chat_id] = members
     members = chats_member.get(chat_id)
 
-    proses = await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 3 menit")
+    await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 3 menit")
     
     on_tagall.append(chat_id)
     start_time = datetime.now()
