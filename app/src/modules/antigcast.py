@@ -130,7 +130,7 @@ def should_delete_message(text):
 
 import asyncio
 
-@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot)
+@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=99)
 async def handle_anti_gcast(client, message):
     chat_id = message.chat.id
     message_text = message.text
