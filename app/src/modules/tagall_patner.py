@@ -65,6 +65,9 @@ async def add_tagall(client: Client, message: Message):
 async def add_tagall(client: Client, message: Message):
     chat_id = message.chat.id
     namagc = message.chat.title
+    if int(message.from_user.id) != OWNER_ID:
+        return
+        
     new_tg = capitalize_message(namagc)
     if new_tg in list_partner:
         await message.reply_text("Gc Patner sudah ada.")
