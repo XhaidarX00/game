@@ -90,28 +90,34 @@ async def convertascci(client, message):
 
 import emoji
 
-# Satu baris regex yang menggabungkan semua kondisi
-delete_message_regex = re.compile(r'[^\x00-\x7F]|(.)\1{2,}|(\b\w+\b\s+){4,}\b\w+\b')
+# Fungsi untuk memisahkan emoji dari teks
+def split_text_and_emoji(text):
+    return ''.join([char for char in text if not emoji.is_emoji(char)])
+    # text_part = ''.join([char for char in text if not emoji.is_emoji(char)])
+    # emoji_part = ''.join([char for char in text if emoji.is_emoji(char)])
+    # return text_part, emoji_part
 
 def should_delete_message(text):
-    if len(text.split(" ")) == 1 and emoji.is_emoji(text):
-        return False
+    text = split_text_and_emoji(text)
     
-    if len(text.split(" ")) >= 3:
+    # Filter regex untuk mendeteksi karakter non-ASCII atau simbol khusus
+    non_ascii_or_special = re.search(r'[^\x00-\x7F]', text)
+    
+    # Hitung jumlah kata dalam kalimat
+    word_count = len(text.split())
+    
+    # Filter untuk mendeteksi kode unik atau karakter berulang lebih dari dua kali
+    unique_code_pattern = re.search(r'(\W|\d|[A-Za-z])\1{2,}', text)
+    
+    # Filter untuk mendeteksi pesan acak (misalnya, huruf kapital acak atau pola yang tidak biasa)
+    random_pattern = re.search(r'([A-Z]{3,}|[a-z]{3,}|[0-9]{3,})', text)
+    
+    # Jika ada karakter non-ASCII atau simbol khusus, jumlah kata lebih dari 4, ada kode unik, atau pola acak
+    if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
         return True
     
-    # Ambil kata pertama dari pesan
-    # first_word = text.split(" ")[0]
-
-    # Jika kata pertama menggunakan font default, jangan hapus pesan
-    if text.split(" ")[0] and not re.search(r'[^\x00-\x7F]', text.split(" ")[0]):
-        return False
-
-    # Periksa semua kondisi dalam satu regex
-    if re.search(delete_message_regex, text):
-        return True
-
     return False
+
 
 import asyncio
 
@@ -134,10 +140,11 @@ async def handle_anti_gcast(client, message):
             async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
                 is_admin.append(member.user.id)
         
-        if user_id not in is_admin and should_delete_message(message_text):
+        
+        if user_id not in is_admin and should_delete_message:
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
             return await client.delete_messages(chat_id, notif.id)
             
     # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
