@@ -145,15 +145,31 @@ async def show_categories(client: Client, message: Message):
     )
 
 
+# Menampilkan List Tagall
+@bot.on_message(filters.command('cancel'))
+async def show_categories(client: Client, message: Message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+    is_admin = await check_user_admin(user_id, chat_id)
+    if is_admin:
+        name_user = message.from_user.first_name
+        user_mention_cancel = await mention_html(name_user, user_id)
+        on_tagall.remove(chat_id)
+        return await bot.send_message(chat_id, f"Tagall dihentikan oleh {user_mention_cancel} !!")
+
+
 def send_data_gc_patner(page=0, per_page=4):
     keyboard = []
-    text = "Daftar List GC Patner\n"
+    text = "Daftar GC Patner Siap tagall\n"
     index_count = 0
     # Tentukan batasan halaman
     start_index = page * per_page
     end_index = min(start_index + per_page, len(list_partner))
     
     keys = list(list_partner.keys())
+    values = list(list_partner.values())
+    values = [index for index, value in enumerate(values) if value not in on_tagall]
+    keys = [keys[index] for index in values]
     
     for idx in range(start_index, end_index, 2):
         text += f"{idx + 1}. {keys[idx]}\n"
@@ -237,6 +253,19 @@ async def check_bot_admin(client, chat_id):
     except ChatAdminRequired:
         return False
 
+# Fungsi untuk memeriksa apakah bot memiliki hak admin
+async def check_user_admin(user_id, chat_id):
+    try:
+        member = await bot.get_chat_member(chat_id, user_id)
+        if member.status ==  ChatMemberStatus.ADMINISTRATOR:
+            return True
+        
+    except ChatAdminRequired:
+        return False
+
+
+on_tagall = []
+
 # Definisikan fungsi untuk menangani tagall
 @bot.on_callback_query(filters.regex(r"listpatner_(\d+)"))
 async def handler_tagall_gc(client: Client, callback_query):
@@ -254,8 +283,8 @@ async def handler_tagall_gc(client: Client, callback_query):
     
     # Periksa apakah bot memiliki hak admin
     if not await check_bot_admin(client, chat_id):
-        return await client.send_message(user_id, "<b>🚫 Bot belum menjadi admin di grup tersebut. Silakan tambahkan bot sebagai admin.</b>")
-
+        return await client.send_message(user_id, f"<b>🚫 Bot belum menjadi admin di grup {namagc}</b>")
+    
     try:
         msg = await bot.ask(user_id, "Masukan Kata Tagall\nWaktumu 1 menit", timeout=60)
         msg_tagall = msg.text
@@ -263,25 +292,26 @@ async def handler_tagall_gc(client: Client, callback_query):
         return await client.send_message(user_id, "<b>⏰ Waktu Kamu Habis! Program Berhenti</b>")
     except Exception as e:
         return await bot.send_message(OWNER_ID, f"Error tagall {e}")
-
+    
     members = []
     if len(chats_member) == 0 or chat_id not in chats_member:
         async for member in client.get_chat_members(chat_id):
             members.append(member.user.id)
         chats_member[chat_id] = members
-
     members = chats_member.get(chat_id)
-    
+
     proses = await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 3 menit")
     
+    on_tagall.append(chat_id)
     start_time = datetime.now()
-    end_time = start_time + timedelta(minutes=3)
+    end_time = start_time + timedelta(minutes=2)
     
     msg_tagall_ = f"{msg_tagall}\n"
     count = 0
     for index, member in enumerate(members):
         if datetime.now() > end_time:
-            await client.send_message(user_id, "<b>⏰ Waktu 3 menit telah habis! Tagall dihentikan.</b>")
+            await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
+            on_tagall.remove(chat_id)
             return
 
         user_mention = await mention_html(choice(emoticons), member)
@@ -289,17 +319,23 @@ async def handler_tagall_gc(client: Client, callback_query):
         
         if (index + 1) % 10 == 0:
             await client.send_message(chat_id, msg_tagall_)
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
             msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
 
         count = index
+        if chat_id not in on_tagall:
+            return
+            # name_user = callback_query.from_user.first_name
+            # user_mention_cancel = await mention_html(name_user, user_id)
+            # return await bot.send_message(chat_id, f"Tagall Berhasil oleh {user_mention_cancel}")
     
     if count % 10 == 1:
         await client.send_message(chat_id, msg_tagall_)
     
-    await proses.edit_text("Tagall Selesai!!")
-
-
+    return
+    
+    
+    
     
 @bot.on_callback_query(filters.regex(r"listpartner_pagee_(\d+)"))
 async def paginate_categories(client: Client, callback_query):
