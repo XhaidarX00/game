@@ -114,14 +114,15 @@ def should_delete_message(text):
     #     await bot.send_message(OWNER_ID, "kode unik atau karakter berulang ")
     
     # Misalnya, kata yang panjangnya antara 8-20 karakter dan memiliki karakter berulang yang tidak wajar
-    random_text_pattern = re.compile(r'^(?=.*[a-zA-Z]{8,20})(?!.*(\w)\1{2,}).*$')
+    # random_text_pattern = re.compile(r'^(?=.*[a-zA-Z]{10,20})(?!.*(\w)\1{2,}).*$')
     # random_text_pattern = re.compile(r'^[a-zA-Z]{8,}$')
     # if random_text_pattern.match(text):
     #     await bot.send_message(OWNER_ID, "pesan acak ")
     
     # Jika ada karakter non-ASCII atau simbol khusus, jumlah kata lebih dari 4, ada kode unik, atau pola acak
     # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
-    if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_text_pattern.match(text):
+    # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_text_pattern.match(text):
+    if non_ascii_or_special or word_count > 4 or unique_code_pattern:
         return True
     
     return False
