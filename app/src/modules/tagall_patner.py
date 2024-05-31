@@ -33,7 +33,7 @@ def capitalize_message(message: str) -> str:
 
 # Menambahkan dan Menghapus User Patner
 
-@bot.on_message(filters.command('addutg', "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command('addutg'))
 async def add_tagall(client: Client, message: Message):
     if not message.reply_to_message:
         await message.reply_text("<b>Gunakan Format :</b> /addtg Balas ke pesan ")
@@ -46,7 +46,7 @@ async def add_tagall(client: Client, message: Message):
         await message.reply_text(f"{new_utg.first_name} berhasil ditambahkan.")
 
 
-@bot.on_message(filters.command('remutg', "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command('remutg'))
 async def add_tagall(client: Client, message: Message):
     if not message.reply_to_message:
         await message.reply_text("<b>Gunakan Format :</b> /remtg Balas ke pesan ")
@@ -61,7 +61,7 @@ async def add_tagall(client: Client, message: Message):
 
 # Menambahkan dan Menghapus Gc Patner
 
-@bot.on_message(filters.command('addtg', "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command('addtg'))
 async def add_tagall(client: Client, message: Message):
     chat_id = message.chat.id
     namagc = message.chat.title
@@ -73,7 +73,7 @@ async def add_tagall(client: Client, message: Message):
         await message.reply_text(f"Gc Patner '{new_tg}' berhasil ditambahkan.")
 
 
-@bot.on_message(filters.command('deltg', "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command('deltg'))
 async def add_tagall(client: Client, message: Message):
     if len(message.command) < 2:
         await message.reply_text("Gunakan: /deltg Nama GC Patner")
@@ -108,7 +108,7 @@ Menu Bantuan
     """
     return help_message
 
-@bot.on_message(filters.command('help') & filters.user(OWNER_ID))
+@bot.on_message(filters.command('help'))
 async def help_menu(client: Client, message: Message):
     """
     Mengirimkan menu bantuan ke pengguna saat perintah /help dipanggil.
@@ -126,7 +126,7 @@ async def help_menu(client: Client, message: Message):
 
 
 # Menampilkan List Tagall
-@bot.on_message(filters.command('dtg', "") & filters.user(OWNER_ID))
+@bot.on_message(filters.command('dtg'))
 async def show_categories(client: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
