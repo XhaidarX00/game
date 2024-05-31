@@ -98,24 +98,26 @@ def split_text_and_emoji(text):
     # return text_part, emoji_part
 
 
-async def should_delete_message(text):
+def should_delete_message(text):
     
     # Filter regex untuk mendeteksi karakter non-ASCII atau simbol khusus
     non_ascii_or_special = re.search(r'[^\x00-\x7F]', text)
-    if non_ascii_or_special:
-        await bot.send_message(OWNER_ID, "Karakter non-ASCII ")
+    # if non_ascii_or_special:
+    #     await bot.send_message(OWNER_ID, "Karakter non-ASCII ")
         
     # Hitung jumlah kata dalam kalimat
     word_count = len(text.split())
     
     # Filter untuk mendeteksi kode unik atau karakter berulang lebih dari dua kali
     unique_code_pattern = re.search(r'(\W|\d|[A-Za-z])\1{2,}', text)
-    if unique_code_pattern:
-        await bot.send_message(OWNER_ID, "kode unik atau karakter berulang ")
+    # if unique_code_pattern:
+    #     await bot.send_message(OWNER_ID, "kode unik atau karakter berulang ")
     
-    random_text_pattern = re.compile(r'^[a-zA-Z]{8,}$')
-    if random_text_pattern.match(text):
-        await bot.send_message(OWNER_ID, "pesan acak ")
+    # Misalnya, kata yang panjangnya antara 8-20 karakter dan memiliki karakter berulang yang tidak wajar
+    random_text_pattern = re.compile(r'^(?=.*[a-zA-Z]{8,20})(?!.*(\w)\1{2,}).*$')
+    # random_text_pattern = re.compile(r'^[a-zA-Z]{8,}$')
+    # if random_text_pattern.match(text):
+    #     await bot.send_message(OWNER_ID, "pesan acak ")
     
     # Jika ada karakter non-ASCII atau simbol khusus, jumlah kata lebih dari 4, ada kode unik, atau pola acak
     # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
@@ -150,7 +152,7 @@ async def handle_anti_gcast(client, message):
         if not text:
             return
         
-        if user_id not in is_admin and await should_delete_message(text):
+        if user_id not in is_admin and should_delete_message(text):
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
             await asyncio.sleep(1)
