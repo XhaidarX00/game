@@ -114,12 +114,13 @@ async def should_delete_message(text):
         await bot.send_message(OWNER_ID, "kode unik atau karakter berulang ")
     
     # Filter untuk mendeteksi pesan acak (misalnya, huruf kapital acak atau pola yang tidak biasa)
-    random_pattern = re.search(r'([A-Z]{3,}|[a-z]{3,}|[0-9]{3,})', text)
-    if random_pattern:
-        await bot.send_message(OWNER_ID, "pesan acak ")
+    # random_pattern = re.search(r'([A-Z]{3,}|[a-z]{3,}|[0-9]{3,})', text)
+    # if random_pattern:
+    #     await bot.send_message(OWNER_ID, "pesan acak ")
     
     # Jika ada karakter non-ASCII atau simbol khusus, jumlah kata lebih dari 4, ada kode unik, atau pola acak
-    if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
+    # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
+    if non_ascii_or_special or word_count > 4 or unique_code_pattern:
         return True
     
     return False
