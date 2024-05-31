@@ -5,6 +5,7 @@ from pyrogram import filters, Client
 # from vertexai.generative_models._generative_models import HarmCategory, HarmBlockThreshold
 # from vertexai.preview.generative_models import GenerativeModel
 
+from pyromod import listen
 from app.config import *
 
 # # Initialize Vertex AI with project and location

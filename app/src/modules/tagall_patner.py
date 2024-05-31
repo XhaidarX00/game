@@ -75,7 +75,7 @@ async def add_tagall(client: Client, message: Message):
         list_partner[new_tg] = chat_id
         await message.reply_text(f"Gc Patner '{new_tg}' berhasil ditambahkan.")
     
-    await bot.send_message(OWNER_ID, "tagallmasuk")
+    # await bot.send_message(OWNER_ID, "tagallmasuk")
 
 @bot.on_message(filters.command('deltg'))
 async def add_tagall(client: Client, message: Message):
@@ -257,12 +257,12 @@ async def handler_tagall_gc(client: Client, callback_query):
         return await client.send_message(user_id, "<b>🚫 Bot belum menjadi admin di grup tersebut. Silakan tambahkan bot sebagai admin.</b>")
 
     try:
-        msg = await client.ask(user_id, "Masukan Kata Tagall\nWaktumu 1 menit", timeout=60)
+        msg = await bot.ask(user_id, "Masukan Kata Tagall\nWaktumu 1 menit", timeout=60)
         msg_tagall = msg.text
     except asyncio.TimeoutError:
         return await client.send_message(user_id, "<b>⏰ Waktu Kamu Habis! Program Berhenti</b>")
-    except:
-        pass
+    except Exception as e:
+        return await bot.send_message(OWNER_ID, f"Error tagall {e}")
 
     members = []
     if len(chats_member) == 0 or chat_id not in chats_member:
