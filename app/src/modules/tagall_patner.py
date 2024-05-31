@@ -288,14 +288,14 @@ async def handler_tagall_gc(client: Client, callback_query):
         msg_tagall_ += f"{user_mention} "
         
         if (index + 1) % 10 == 0:
-            await client.send_message(chat_id, msg_tagall)
+            await client.send_message(chat_id, msg_tagall_)
             await asyncio.sleep(1)
             msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
 
         count = index
     
     if count % 10 == 1:
-        await client.send_message(chat_id, msg_tagall)
+        await client.send_message(chat_id, msg_tagall_)
     
     await proses.edit_text("Tagall Selesai!!")
 
