@@ -284,7 +284,7 @@ async def handler_tagall_gc(client: Client, callback_query):
             await client.send_message(user_id, "<b>⏰ Waktu 3 menit telah habis! Tagall dihentikan.</b>")
             return
 
-        user_mention = await mention_html(emoticons[index % len(emoticons)], member)
+        user_mention = await mention_html(choice(emoticons), member)
         msg_tagall_ += f"{user_mention} "
         
         if (index + 1) % 10 == 0:
