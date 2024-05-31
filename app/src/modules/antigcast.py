@@ -104,7 +104,7 @@ def should_delete_message(text):
     # first_word = text.split(" ")[0]
 
     # Jika kata pertama menggunakan font default, jangan hapus pesan
-    if text.split(" ")[0] and not re.search(r'[^\x00-\x7F]', text.split(" ")[0].group()):
+    if text.split(" ")[0] and not re.search(r'[^\x00-\x7F]', text.split(" ")[0]):
         return False
 
     # Periksa semua kondisi dalam satu regex
