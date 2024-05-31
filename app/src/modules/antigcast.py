@@ -97,8 +97,8 @@ def split_text_and_emoji(text):
     # emoji_part = ''.join([char for char in text if emoji.is_emoji(char)])
     # return text_part, emoji_part
 
+
 def should_delete_message(text):
-    text = split_text_and_emoji(text)
     
     # Filter regex untuk mendeteksi karakter non-ASCII atau simbol khusus
     non_ascii_or_special = re.search(r'[^\x00-\x7F]', text)
@@ -140,7 +140,9 @@ async def handle_anti_gcast(client, message):
             async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
                 is_admin.append(member.user.id)
         
-        if user_id not in is_admin and should_delete_message(message_text):
+        text = split_text_and_emoji(message_text)
+        await bot.send_message(OWNER_ID, text)
+        if user_id not in is_admin and should_delete_message(text):
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
             await asyncio.sleep(2)
