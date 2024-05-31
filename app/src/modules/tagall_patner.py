@@ -14,7 +14,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 # from pyrogram.enums import ChatType
 from app import bot, OWNER_ID
 
-user_ids_parter = []
+user_ids_parter = [OWNER_ID]
 list_partner = {}
 
 def capitalize_message(message: str) -> str:
@@ -249,7 +249,7 @@ async def handler_tagall_gc(client: Client, callback_query):
     msg_tagall = None
     
     # Periksa batas penggunaan
-    if not check_usage_limit(user_id):
+    if int(user_id) != OWNER_ID and not check_usage_limit(user_id):
         return await client.send_message(user_id, "<b>🚫 Kamu telah mencapai batas penggunaan untuk hari ini. Silakan coba lagi besok.</b>")
     
     # Periksa apakah bot memiliki hak admin
