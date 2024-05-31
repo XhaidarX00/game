@@ -289,7 +289,7 @@ async def handler_tagall_gc(client: Client, callback_query):
         
         if (index + 1) % 10 == 0:
             await client.send_message(chat_id, msg_tagall_)
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
             msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
 
         count = index
