@@ -165,6 +165,7 @@ ids_delete_message_notif = []
 
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=99)
 async def handle_anti_gcast(client, message):
+    global is_admin
     chat_id = message.chat.id
     message_text = message.text
     message_id = message.id
@@ -202,6 +203,7 @@ async def handle_anti_gcast(client, message):
 
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=100)
 async def handle_anti_gcast(client, message):
+    global ids_delete_message_notif
     chat_id = message.chat.id
     if len(ids_delete_message_notif) != 0:
         for ids_msg in ids_delete_message_notif:
