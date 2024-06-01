@@ -191,7 +191,7 @@ async def help(client, message: Message):
 
 import asyncio
 
-@bot.on_message(filters.reply & filters.text, group=1)
+@bot.on_message(filters.reply & filters.text, group=97)
 async def check_answer(client, message: Message):
     if current_question:
         global id_msg_current, category, start_time, end_time

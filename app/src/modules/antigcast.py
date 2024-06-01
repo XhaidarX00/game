@@ -136,7 +136,7 @@ def should_delete_message(text):
     #     await bot.send_message(OWNER_ID, "Karakter non-ASCII ")
         
     # Hitung jumlah kata dalam kalimat
-    # word_count = len(text.split())
+    word_count = len(text.split())
     
     # Filter untuk mendeteksi kode unik atau karakter berulang lebih dari dua kali
     unique_code_pattern = re.search(r'(\W|\d|[A-Za-z])\1{2,}', text)
@@ -152,7 +152,7 @@ def should_delete_message(text):
     # Jika ada karakter non-ASCII atau simbol khusus, jumlah kata lebih dari 4, ada kode unik, atau pola acak
     # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_pattern:
     # if non_ascii_or_special or word_count > 4 or unique_code_pattern or random_text_pattern.match(text):
-    if non_ascii_or_special or unique_code_pattern:
+    if non_ascii_or_special or word_count > 5 or unique_code_pattern:
         return True
     
     return False
@@ -203,13 +203,13 @@ async def handle_anti_gcast(client, message):
     # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
 
 
-@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=100)
+@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=98)
 async def handle_anti_gcast(client, message):
     global ids_delete_message_notif
     chat_id = message.chat.id
     if len(ids_delete_message_notif) != 0:
         for ids_msg in ids_delete_message_notif:
             await client.delete_messages(chat_id, ids_msg)
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
     else:
         pass
