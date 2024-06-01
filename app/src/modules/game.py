@@ -191,7 +191,7 @@ async def help(client, message: Message):
 
 import asyncio
 
-@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=97)
+@bot.on_message(filters.reply & filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=97)
 async def check_answer(client, message: Message):
     global id_msg_current, category, start_time, end_time, current_question
     if message.reply_to_message and current_question:
@@ -201,29 +201,40 @@ async def check_answer(client, message: Message):
             nama += f" {message.from_user.last_name}"
             
         mention = await mention_html(nama, message.from_user.id)
-        if message.reply_to_message_id == id_msg_current:
+        if int(message.reply_to_message.id) == int(id_msg_current):
             if message.text.strip().lower() == current_question['jawaban'].strip().lower():
                 deskripsi = current_question['deskripsi']
                 format_jawab = f"Jawaban {mention} benar!\n{deskripsi}\n\n tunggu 5 detik untuk next soalllll"
                 jawab = await bot.send_message(chat_id, format_jawab)
                 
                 await asyncio.sleep(5)
-                
+                if id_msg_current:
+                    await bot.delete_messages(chat_id, id_msg_current)
+                if nyerah_id_msg:
+                    await bot.delete_messages(chat_id, nyerah_id_msg)
+                question = get_random_question(category)
+                soal = question['soal']
+                format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
+                await bot.delete_messages(chat_id, jawab.id)
+                start_time = datetime.now()
+                end_time = start_time + timedelta(minutes=5)
+                sent_message = await bot.send_message(chat_id, format_text)
+                id_msg_current = sent_message.id
+            
             if datetime.now() > end_time:
                 await client.send_message(chat_id, "<b>⏰ Waktu 5 menit telah habis! Permainan Dihentikan</b>")
-        
-            if id_msg_current:
-                await bot.delete_messages(chat_id, id_msg_current)
-            if nyerah_id_msg:
-                await bot.delete_messages(chat_id, nyerah_id_msg)
-            question = get_random_question(category)
-            soal = question['soal']
-            format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
-            await bot.delete_messages(chat_id, jawab.id)
-            start_time = datetime.now()
-            end_time = start_time + timedelta(minutes=5)
-            sent_message = await bot.send_message(chat_id, format_text)
-            id_msg_current = sent_message.id
+                if id_msg_current:
+                    await bot.delete_messages(chat_id, id_msg_current)
+                if nyerah_id_msg:
+                    await bot.delete_messages(chat_id, nyerah_id_msg)
+                question = get_random_question(category)
+                soal = question['soal']
+                format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
+                await bot.delete_messages(chat_id, jawab.id)
+                start_time = datetime.now()
+                end_time = start_time + timedelta(minutes=5)
+                sent_message = await bot.send_message(chat_id, format_text)
+                id_msg_current = sent_message.id
                 
                 
     #     else:
