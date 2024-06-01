@@ -175,12 +175,23 @@ def has_repeating_characters(text):
 
 # Function to detect message modification (bold, italic, strikethrough, underline)
 def has_modification(text):
-    return any([
-        bool(re.search(r'\*\*.*\*\*', text)),  # Bold
-        bool(re.search(r'__.*__', text)),  # Underline
-        bool(re.search(r'~~.*~~', text)),  # Strikethrough
-        bool(re.search(r'\*.*\*', text))  # Italic
-    ])
+    markdown_patterns = [
+        re.compile(r'\*\*.*\*\*'),  # Bold in Markdown
+        re.compile(r'__.*__'),  # Underline in Markdown
+        re.compile(r'~~.*~~'),  # Strikethrough in Markdown
+        re.compile(r'\*.*\*')  # Italic in Markdown
+    ]
+    html_patterns = [
+        re.compile(r'<b>.*</b>'),  # Bold in HTML
+        re.compile(r'<strong>.*</strong>'),  # Bold in HTML
+        re.compile(r'<u>.*</u>'),  # Underline in HTML
+        re.compile(r'<i>.*</i>'),  # Italic in HTML
+        re.compile(r'<em>.*</em>'),  # Italic in HTML
+        re.compile(r'<s>.*</s>'),  # Strikethrough in HTML
+        re.compile(r'<strike>.*</strike>')  # Strikethrough in HTML
+    ]
+    
+    return any(pattern.search(text) for pattern in markdown_patterns + html_patterns)
 
 
 import asyncio
@@ -196,37 +207,40 @@ async def handle_anti_gcast(client, message):
     message_text = message.text
     message_id = message.id
     
-    if message.forward_sender_name:
-        return await client.delete_messages(chat_id, message_id)
-        
-    if message.from_user.id:
-        user_id = message.from_user.id
-        name = message.from_user.first_name
-        
-        mention = await mention_html(name, user_id)
+    try:
+        if message.forward_sender_name:
+            return await client.delete_messages(chat_id, message_id)
+            
+        if message.from_user.id:
+            user_id = message.from_user.id
+            name = message.from_user.first_name
+            
+            mention = await mention_html(name, user_id)
 
-        if len(is_admin) == 0:
-            async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
-                is_admin.append(member.user.id)
-            if udb.exsist("HFREE"):
-                is_admin_ = udb.read("HFREE")
-                is_admin_ = ast.literal_eval(is_admin_)
-                is_admin += is_admin_
-                is_admin = remove_duplicate_values(is_admin)
-            else:
-                pass
-        
-        text = split_text_and_emoji(message_text)
-        if not text:
-            return
-        
-        # if user_id not in is_admin and should_delete_message(text):
-        if user_id not in is_admin:
-            if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text):
-                await client.delete_messages(chat_id, message_id)
-                notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
-                await asyncio.sleep(1)
-                await client.delete_messages(chat_id, notif.id)
+            if len(is_admin) == 0:
+                async for member in client.get_chat_members(chat_id, filter=CMF.ADMINISTRATORS):
+                    is_admin.append(member.user.id)
+                if udb.exsist("HFREE"):
+                    is_admin_ = udb.read("HFREE")
+                    is_admin_ = ast.literal_eval(is_admin_)
+                    is_admin += is_admin_
+                    is_admin = remove_duplicate_values(is_admin)
+                else:
+                    pass
+            
+            text = split_text_and_emoji(message_text)
+            if not text:
+                return
+            
+            # if user_id not in is_admin and should_delete_message(text):
+            if user_id not in is_admin:
+                if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text):
+                    await client.delete_messages(chat_id, message_id)
+                    notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+                    await asyncio.sleep(1)
+                    await client.delete_messages(chat_id, notif.id)
+    except:
+        pass
             
     # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
 
