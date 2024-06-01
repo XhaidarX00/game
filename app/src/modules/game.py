@@ -104,7 +104,7 @@ async def show_category_links(client: Client, callback_query):
     category_idx = int(callback_query.data.split("_")[1])
     category = categories[category_idx]
     current_question = get_random_question(category)
-    format_text = f"Pertanyaan : \n💁 {current_question.get("soal")}?\nwaktumu 5 menit untuk menjawab!!"   
+    format_text = f"Pertanyaan : \n💁 {current_question["soal"]}?\nwaktumu 5 menit untuk menjawab!!"   
     start_time = datetime.now()
     end_time = start_time + timedelta(minutes=5)
     id_msg_current = callback_query.message.id
