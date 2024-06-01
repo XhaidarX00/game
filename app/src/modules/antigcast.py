@@ -160,7 +160,7 @@ def should_delete_message(text):
 
 # Function to detect unique font
 def has_unique_font(text):
-    unique_font_pattern = re.compile(r'[^\w\s,.!?\'\";:()\-]')
+    unique_font_pattern = re.compile(r'[^\u0000-\u007F]+')  # Detects non-ASCII characters
     return bool(unique_font_pattern.search(text))
 
 # Function to detect random patterns
@@ -176,19 +176,19 @@ def has_repeating_characters(text):
 # Function to detect message modification (bold, italic, strikethrough, underline)
 def has_modification(text):
     markdown_patterns = [
-        re.compile(r'\*\*.*\*\*'),  # Bold in Markdown
-        re.compile(r'__.*__'),  # Underline in Markdown
-        re.compile(r'~~.*~~'),  # Strikethrough in Markdown
-        re.compile(r'\*.*\*')  # Italic in Markdown
+        re.compile(r'\*\*.*?\*\*'),  # Bold in Markdown
+        re.compile(r'__.*?__'),  # Underline in Markdown
+        re.compile(r'~~.*?~~'),  # Strikethrough in Markdown
+        re.compile(r'\*.*?\*')  # Italic in Markdown
     ]
     html_patterns = [
-        re.compile(r'<b>.*</b>'),  # Bold in HTML
-        re.compile(r'<strong>.*</strong>'),  # Bold in HTML
-        re.compile(r'<u>.*</u>'),  # Underline in HTML
-        re.compile(r'<i>.*</i>'),  # Italic in HTML
-        re.compile(r'<em>.*</em>'),  # Italic in HTML
-        re.compile(r'<s>.*</s>'),  # Strikethrough in HTML
-        re.compile(r'<strike>.*</strike>')  # Strikethrough in HTML
+        re.compile(r'<b>.*?</b>'),  # Bold in HTML
+        re.compile(r'<strong>.*?</strong>'),  # Bold in HTML
+        re.compile(r'<u>.*?</u>'),  # Underline in HTML
+        re.compile(r'<i>.*?</i>'),  # Italic in HTML
+        re.compile(r'<em>.*?</em>'),  # Italic in HTML
+        re.compile(r'<s>.*?</s>'),  # Strikethrough in HTML
+        re.compile(r'<strike>.*?</strike>')  # Strikethrough in HTML
     ]
     
     return any(pattern.search(text) for pattern in markdown_patterns + html_patterns)
