@@ -108,8 +108,9 @@ async def show_categori_excecute(client: Client, callback_query):
     format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
     start_time = datetime.now()
     end_time = start_time + timedelta(minutes=5)
-    id_msg_current = callback_query.message.id
-    return await bot.send_message(chat_id, format_text)
+    send_play_id = await bot.send_message(chat_id, format_text)
+    id_msg_current = send_play_id.id
+    return
 
 
 
@@ -194,13 +195,13 @@ import asyncio
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=97)
 async def check_answer(client, message: Message):
     global id_msg_current, category, start_time, end_time, current_question
-    await bot.send_message(-1001920067433, f"{id_msg_current}, {category}, {start_time}, {end_time}, {current_question}")
     if message.reply_to_message and current_question:
         chat_id = message.chat.id
         nama = message.from_user.first_name
         if message.from_user.last_name:
             nama += f" {message.from_user.last_name}"
-            
+        
+        await bot.send_message(-1001920067433, f"{id_msg_current}, {category}, {start_time}, {end_time}, {current_question}")
         mention = await mention_html(nama, message.from_user.id)
         if int(message.reply_to_message.id) == int(id_msg_current):
             if message.text.strip().lower() == current_question['jawaban'].strip().lower():
