@@ -36,6 +36,7 @@ def capitalize_message(message: str) -> str:
 
 @bot.on_message(filters.command('addutg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
+    global user_ids_parter
     if not message.reply_to_message:
         await message.reply_text("<b>Gunakan Format :</b> /addtg Balas ke pesan ")
         return
@@ -54,6 +55,7 @@ async def add_tagall(client: Client, message: Message):
 
 @bot.on_message(filters.command('remutg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
+    global user_ids_parter
     user_id = None
     name = None
     if message.reply_to_message:
@@ -82,6 +84,7 @@ async def add_tagall(client: Client, message: Message):
 
 @bot.on_message(filters.command('addtg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
+    global list_partner
     chat_id = message.chat.id
     namagc = message.chat.title
     
@@ -101,6 +104,7 @@ async def add_tagall(client: Client, message: Message):
 
 @bot.on_message(filters.command('deltg') & filters.user(OWNER_ID))
 async def add_tagall(client: Client, message: Message):
+    global list_partner
     if len(message.command) < 2:
         await message.reply_text("Gunakan: /deltg Nama GC Patner")
         return
@@ -164,6 +168,7 @@ async def help_menu(client: Client, message: Message):
 # Menampilkan List Tagall
 @bot.on_message(filters.command('dtg'))
 async def show_categories(client: Client, message: Message):
+    global list_partner, user_ids_parter
     chat_id = message.chat.id
     user_id = message.from_user.id
     name = message.from_user.first_name
@@ -210,6 +215,7 @@ async def show_categories(client: Client, message: Message):
 # Menampilkan List Tagall
 @bot.on_message(filters.command('cancel'))
 async def show_categories(client: Client, message: Message):
+    global on_tagall
     chat_id = message.chat.id
     user_id = message.from_user.id
     is_admin = await check_user_admin(user_id, chat_id)
@@ -221,6 +227,7 @@ async def show_categories(client: Client, message: Message):
 
 
 def send_data_gc_patner(page=0, per_page=4):
+    global list_partner
     keyboard = []
     text = "Daftar GC Patner Siap tagall\n"
     index_count = 0
@@ -331,6 +338,7 @@ on_tagall = []
 # Definisikan fungsi untuk menangani tagall
 @bot.on_callback_query(filters.regex(r"listpatner_(\d+)"))
 async def handler_tagall_gc(client: Client, callback_query):
+    global list_partner, chats_member, on_tagall
     tagall_idx = int(callback_query.data.split("_")[1])
     keys = list(list_partner.keys())
     values = list(list_partner.values())
