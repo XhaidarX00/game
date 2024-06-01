@@ -148,7 +148,7 @@ Menu Bantuan
 #     """
     return help_message
 
-@bot.on_message(filters.command('help'))
+@bot.on_message(filters.command('tghelp'))
 async def help_menu(client: Client, message: Message):
     """
     Mengirimkan menu bantuan ke pengguna saat perintah /help dipanggil.
