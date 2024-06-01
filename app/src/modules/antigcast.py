@@ -166,6 +166,7 @@ ids_delete_message_notif = []
 @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=99)
 async def handle_anti_gcast(client, message):
     global is_admin
+    is_admin_ = None
     chat_id = message.chat.id
     message_text = message.text
     message_id = message.id
