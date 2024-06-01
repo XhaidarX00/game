@@ -34,7 +34,7 @@ categories = [
 # Fungsi untuk mengirim daftar kategori
 def send_categories(page=0, per_page=4):
     keyboard = []
-    text = "Daftar Gcs DiFams\n"
+    text = "\n"
     index_count = 0
     # Tentukan batasan halaman
     start_index = page * per_page
@@ -98,9 +98,9 @@ id_msg_current = None
 
 # Definisikan fungsi untuk menangani permintaan pembaruan tautan kategori
 @bot.on_callback_query(filters.regex(r"category_(\d+)"))
-async def show_category_links(client: Client, callback_query):
+async def show_categori_excecute(client: Client, callback_query):
     global current_question, start_time, end_time, category, id_msg_current
-    chat_id=callback_query.chat.id
+    chat_id=callback_query.message.chat.id
     category_idx = int(callback_query.data.split("_")[1])
     category = categories[category_idx]
     current_question = get_random_question(category)
