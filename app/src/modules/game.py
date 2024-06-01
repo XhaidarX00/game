@@ -118,15 +118,18 @@ async def skip(client, message: Message):
     global current_question, category, id_msg_current, start_time, end_time
     chat_id = message.chat.id
     if current_question:
-        await message.reply_text("Pertanyaan dilewati.")
-    question = get_random_question(category)
-    format_text = f"Pertanyaan : \n💁 {question.get("soal")}?\nwaktumu 5 menit untuk menjawab!!"   
-    if id_msg_current:
-        await bot.delete_messages(chat_id, id_msg_current)
-    skip = await bot.send_message(chat_id, format_text)
-    id_msg_current = skip.id
-    start_time = datetime.now()
-    end_time = start_time + timedelta(minutes=5)
+        await bot.send_message(chat_id, "Pertanyaan dilewati!!")
+        question = get_random_question(category)
+        soal = question['soal']
+        format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
+        if id_msg_current:
+            await bot.delete_messages(chat_id, id_msg_current)
+        skip = await bot.send_message(chat_id, format_text)
+        id_msg_current = skip.id
+        start_time = datetime.now()
+        end_time = start_time + timedelta(minutes=5)
+    else:
+        pass
 
 
 nyerah_id_msg = None
@@ -137,17 +140,22 @@ async def nyerah(client, message: Message):
     chat_id = message.chat.id
     
     if current_question:
-        nyerah_id = await message.reply_text(f"Jawaban: {current_question['jawaban']}\n{current_question['deskripsi']}")
+        jawaban = current_question['jawaban']
+        deskripsi = current_question['deskripsi']
+        nyerah_id = await bot.send_message(chat_id, f"Jawaban: {jawaban}\n{deskripsi}")
         nyerah_id_msg = nyerah_id
         
-    question = get_random_question(category)
-    format_text = f"Pertanyaan : \n💁 {question.get("soal")}?\nwaktumu 5 menit untuk menjawab!!"   
-    if id_msg_current:
-        await bot.delete_messages(chat_id, id_msg_current)
-    nyerah = await bot.send_message(chat_id, format_text)
-    id_msg_current = nyerah.id
-    start_time = datetime.now()
-    end_time = start_time + timedelta(minutes=5)
+        question = get_random_question(category)
+        soal = question['soal']
+        format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
+        if id_msg_current:
+            await bot.delete_messages(chat_id, id_msg_current)
+        nyerah = await bot.send_message(chat_id, format_text)
+        id_msg_current = nyerah.id
+        start_time = datetime.now()
+        end_time = start_time + timedelta(minutes=5)
+    else:
+        pass
 
 
 @bot.on_message(filters.command("endgame"))
@@ -199,16 +207,18 @@ async def check_answer(client, message: Message):
         
         if message.reply_to_message and message.reply_to_message_id == id_msg_current:
             if message.text.strip().lower() == current_question['jawaban'].strip().lower():
-                format_jawab = f"Jawaban {mention} benar!\n{current_question['deskripsi']}\n\n tunggu 5 detik untuk next soalllll"
+                deskripsi = current_question['deskripsi']
+                format_jawab = f"Jawaban {mention} benar!\n{deskripsi}\n\n tunggu 5 detik untuk next soalllll"
                 jawab = await bot.send_message(chat_id, format_jawab)
-                question = get_random_question(category)
                 
                 await asyncio.sleep(5)
                 if id_msg_current:
                     await bot.delete_messages(chat_id, id_msg_current)
                 if nyerah_id_msg:
                     await bot.delete_messages(chat_id, nyerah_id_msg)
-                format_text = f"Pertanyaan : \n💁 {question.get("soal")}?\nwaktumu 5 menit untuk menjawab!!"   
+                question = get_random_question(category)
+                soal = question['soal']
+                format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
                 await bot.delete_messages(chat_id, jawab.id)
                 start_time = datetime.now()
                 end_time = start_time + timedelta(minutes=5)
