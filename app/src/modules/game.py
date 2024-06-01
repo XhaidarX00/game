@@ -191,9 +191,10 @@ async def help(client, message: Message):
 
 import asyncio
 
-@bot.on_message(filters.reply & filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=97)
+@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=97)
 async def check_answer(client, message: Message):
     global id_msg_current, category, start_time, end_time, current_question
+    await bot.send_message(-1001920067433, f"{id_msg_current}, {category}, {start_time}, {end_time}, {current_question}")
     if message.reply_to_message and current_question:
         chat_id = message.chat.id
         nama = message.from_user.first_name
@@ -236,8 +237,8 @@ async def check_answer(client, message: Message):
                 sent_message = await bot.send_message(chat_id, format_text)
                 id_msg_current = sent_message.id
                 
-                
+         
     #     else:
     #         await message.reply_text("Jawaban Anda salah, coba lagi.")
-    else:
-        await message.reply_text("Balaslah pesan pertanyaan untuk menjawab.")
+    # else:
+    #     await message.reply_text("Balaslah pesan pertanyaan untuk menjawab.")
