@@ -194,6 +194,26 @@ def has_modification(text):
     return any(pattern.search(text) for pattern in markdown_patterns + html_patterns)
 
 
+from unidecode import unidecode
+
+def convert_font(text):
+    """
+    Mengubah font lain kedalam font biasa.
+
+    Args:
+        text: Teks yang ingin diubah fontnya.
+
+    Returns:
+        Teks dengan font biasa.
+    """
+    text = "".join([unidecode(c) for c in text])
+    
+    if text:
+        return text
+    
+    return None
+
+
 import asyncio
 import ast
 
@@ -234,7 +254,8 @@ async def handle_anti_gcast(client, message):
             
             # if user_id not in is_admin and should_delete_message(text):
             if user_id not in is_admin:
-                if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
+                # if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
+                if convert_font(text) or has_random_pattern(text) or has_repeating_characters(text) or len(message_text.split(" ")) >= 5:
                     await client.delete_messages(chat_id, message_id)
                     notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
                     await asyncio.sleep(1)
