@@ -7,7 +7,7 @@ from app.database.dbgame import DBGAME
 
 
 # Menampilkan List Tagall
-@bot.on_message(filters.command("/play"))
+@bot.on_message(filters.command("play"))
 async def convertascci(client, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
