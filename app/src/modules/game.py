@@ -224,19 +224,8 @@ async def check_answer(client, message: Message):
                 id_msg_current = sent_message.id
             
             if datetime.now() > end_time:
-                await client.send_message(chat_id, "<b>⏰ Waktu 5 menit telah habis! Permainan Dihentikan</b>")
-                if id_msg_current:
-                    await bot.delete_messages(chat_id, id_msg_current)
-                if nyerah_id_msg:
-                    await bot.delete_messages(chat_id, nyerah_id_msg)
-                question = get_random_question(category)
-                soal = question['soal']
-                format_text = f"Pertanyaan : \n💁 {soal}?\nwaktumu 5 menit untuk menjawab!!"   
-                await bot.delete_messages(chat_id, jawab.id)
-                start_time = datetime.now()
-                end_time = start_time + timedelta(minutes=5)
-                sent_message = await bot.send_message(chat_id, format_text)
-                id_msg_current = sent_message.id
+                await client.send_message(chat_id, "<b>⏰ Waktu 5 menit telah habis!</b>")
+                return await endgame(client, message)
                 
          
     #     else:
