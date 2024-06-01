@@ -214,6 +214,13 @@ def convert_font(text, message_text):
     return None
 
 
+def check_pesan(text, message_text):
+    if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
+        return True
+    
+    return None
+
+
 import asyncio
 import ast
 
@@ -252,8 +259,7 @@ async def handle_anti_gcast(client, message):
                 return
             
             # if user_id not in is_admin and should_delete_message(text):
-            if user_id not in is_admin:
-                if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
+            if user_id not in is_admin and check_pesan(text, message_text):
                     await client.delete_messages(chat_id, message_id)
                     notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
                     await asyncio.sleep(1)
