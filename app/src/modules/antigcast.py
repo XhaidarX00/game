@@ -158,6 +158,31 @@ def should_delete_message(text):
     return False
 
 
+# Function to detect unique font
+def has_unique_font(text):
+    unique_font_pattern = re.compile(r'[^\w\s,.!?\'\";:()\-]')
+    return bool(unique_font_pattern.search(text))
+
+# Function to detect random patterns
+def has_random_pattern(text):
+    random_pattern = re.compile(r'\b\w{10,}\b')  # Words with 10 or more characters
+    return bool(random_pattern.search(text))
+
+# Function to detect repeating characters
+def has_repeating_characters(text):
+    repeating_char_pattern = re.compile(r'(.)\1{2,}')  # Any character repeated 3 or more times
+    return bool(repeating_char_pattern.search(text))
+
+# Function to detect message modification (bold, italic, strikethrough, underline)
+def has_modification(text):
+    return any([
+        bool(re.search(r'\*\*.*\*\*', text)),  # Bold
+        bool(re.search(r'__.*__', text)),  # Underline
+        bool(re.search(r'~~.*~~', text)),  # Strikethrough
+        bool(re.search(r'\*.*\*', text))  # Italic
+    ])
+
+
 import asyncio
 import ast
 
@@ -195,11 +220,13 @@ async def handle_anti_gcast(client, message):
         if not text:
             return
         
-        if user_id not in is_admin and should_delete_message(text):
-            await client.delete_messages(chat_id, message_id)
-            notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
-            await asyncio.sleep(1)
-            await client.delete_messages(chat_id, notif.id)
+        # if user_id not in is_admin and should_delete_message(text):
+        if user_id not in is_admin:
+            if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text):
+                await client.delete_messages(chat_id, message_id)
+                notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+                await asyncio.sleep(1)
+                await client.delete_messages(chat_id, notif.id)
             
     # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
 
