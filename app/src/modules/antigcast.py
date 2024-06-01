@@ -186,9 +186,10 @@ async def handle_anti_gcast(client, message):
             if udb.exsist("HFREE"):
                 is_admin_ = udb.read("HFREE")
                 is_admin_ = ast.literal_eval(is_admin_)
-            
-            is_admin += is_admin_
-            is_admin = remove_duplicate_values(is_admin)
+                is_admin += is_admin_
+                is_admin = remove_duplicate_values(is_admin)
+            else:
+                pass
         
         text = split_text_and_emoji(message_text)
         if not text:
