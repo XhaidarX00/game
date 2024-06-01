@@ -165,6 +165,28 @@ async def help_menu(client: Client, message: Message):
         await message.reply_text(f"Terjadi kesalahan: {e}", parse_mode=enums.ParseMode.MARKDOWN)
 
 
+def remove_duplicate_values(input_dict):
+    """
+    Menghapus entri dengan nilai duplikat dari dictionary.
+    
+    Args:
+    input_dict (dict): Dictionary asal yang mungkin berisi nilai duplikat.
+    
+    Returns:
+    dict: Dictionary baru dengan nilai-nilai unik.
+    """
+    unique_values = {}
+    seen_values = set()
+
+    for key, value in input_dict.items():
+        if value not in seen_values:
+            unique_values[key] = value
+            seen_values.add(value)
+
+    return unique_values
+
+
+
 # Menampilkan List Tagall
 @bot.on_message(filters.command('dtg'))
 async def show_categories(client: Client, message: Message):
@@ -175,15 +197,19 @@ async def show_categories(client: Client, message: Message):
     if len(list_partner) == 0 or len(user_ids_parter) == 0:
         list_partner_ = udb.read("GCTAGALLPATNER")
         list_partner_ = ast.literal_eval(list_partner_)
-        if len(list_partner_):
+        ids_users = udb.read("USERTAGALLPATNER")
+        ids_users = ast.literal_eval(ids_users)
+        user_ids_parter += ids_users
+        if len(list_partner_) == 0:
             return await bot.send_message(chat_id, "List Patner Kosong!!")
         else:
-            ids_users = udb.read("USERTAGALLPATNER")
-            ids_users = ast.literal_eval(ids_users)
             user_ids_parter += ids_users
+            list_partner.update(list_partner_)
+            list_partner = remove_duplicate_values(list_partner)
+            
     
     message_text, keyboard = send_data_gc_patner()
-    user_mention_display = await (name, user_id)
+    user_mention_display = await mention_html(name, user_id)
     text = f"Hai 👋 {user_mention_display}\n"
     text += message_text
     await client.send_message(
@@ -191,6 +217,8 @@ async def show_categories(client: Client, message: Message):
         text=text,
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
+
 
 # Menampilkan users Tagall
 @bot.on_message(filters.command('dutg') & filters.user(OWNER_ID))
