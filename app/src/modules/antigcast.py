@@ -198,18 +198,19 @@ async def handle_anti_gcast(client, message):
         if user_id not in is_admin and should_delete_message(text):
             await client.delete_messages(chat_id, message_id)
             notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
-            ids_delete_message_notif.append(notif.id)
+            await asyncio.sleep(1)
+            await client.delete_messages(chat_id, notif.id)
             
     # await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ {message_text} {should_delete_message(message_text)}")
 
 
-@bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=98)
-async def handle_anti_gcast(client, message):
-    global ids_delete_message_notif
-    chat_id = message.chat.id
-    if len(ids_delete_message_notif) != 0:
-        for ids_msg in ids_delete_message_notif:
-            await client.delete_messages(chat_id, ids_msg)
-            await asyncio.sleep(1)
-    else:
-        pass
+# @bot.on_message(filters.text & ~filters.private & ~filters.bot & ~filters.via_bot, group=98)
+# async def handle_anti_gcast(client, message):
+#     global ids_delete_message_notif
+#     chat_id = message.chat.id
+#     if len(ids_delete_message_notif) != 0:
+#         for ids_msg in ids_delete_message_notif:
+#             await client.delete_messages(chat_id, ids_msg)
+#             await asyncio.sleep(1)
+#     else:
+#         pass
