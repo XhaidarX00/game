@@ -160,7 +160,7 @@ def should_delete_message(text):
 
 # Function to detect unique font
 def has_unique_font(text):
-    unique_font_pattern = re.compile(r'[^\u0000-\u007F]+')  # Detects non-ASCII characters
+    unique_font_pattern = re.compile(r'[^\u0020-\u007E\u00A0-\u00FF\u0100-\u017F]+')
     return bool(unique_font_pattern.search(text))
 
 # Function to detect random patterns
@@ -234,7 +234,6 @@ async def handle_anti_gcast(client, message):
         if message.from_user.id:
             user_id = message.from_user.id
             name = message.from_user.first_name
-            
             mention = await mention_html(name, user_id)
 
             if len(is_admin) == 0:
@@ -254,8 +253,7 @@ async def handle_anti_gcast(client, message):
             
             # if user_id not in is_admin and should_delete_message(text):
             if user_id not in is_admin:
-                # if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
-                if convert_font(text, message_text) or has_random_pattern(text) or has_repeating_characters(text) or len(message_text.split(" ")) >= 5:
+                if has_unique_font(text) or has_random_pattern(text) or has_repeating_characters(text) or has_modification(text) or len(message_text.split(" ")) >= 5:
                     await client.delete_messages(chat_id, message_id)
                     notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
                     await asyncio.sleep(1)
