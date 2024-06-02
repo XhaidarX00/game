@@ -205,7 +205,6 @@ async def show_categories(client: Client, message: Message):
             ids_users = ast.literal_eval(ids_users)
             user_ids_parter += ids_users
         else:
-            user_ids_parter += ids_users
             list_partner.update(list_partner_)
             list_partner = remove_duplicate_values(list_partner)
             
