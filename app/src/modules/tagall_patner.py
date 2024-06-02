@@ -437,10 +437,10 @@ async def handler_tagall_gc(client: Client, callback_query):
             elif member.user.is_deleted == True:
               pass
             else:
-                members.append(member.user.id)
+                membersList.append(member.user.id)
                 
-        chats_member[chat_id] = members
-    members = chats_member.get(chat_id)
+        chats_member[chat_id] = membersList
+    membersList = chats_member.get(chat_id)
 
     await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 2 menit")
     
