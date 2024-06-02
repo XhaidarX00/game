@@ -387,11 +387,14 @@ async def handler_tagall_process(client, members, end_time, chat_id, msg_tagall,
             # user_mention_cancel = await mention_html(name_user, user_id)
             # return await bot.send_message(chat_id, f"Tagall Berhasil oleh {user_mention_cancel}")
     
-    if count % 10 == 1:
-        await client.send_message(chat_id, msg_tagall_)
+    # if count % 10 == 1:
+    #     # await client.send_message(chat_id, msg_tagall_)
+    #     while len(membersList) > 0 and not stopProcess :
     
     return
 
+
+from pyrogram.errors import FloodWait
 
 # Definisikan fungsi untuk menangani tagall
 @bot.on_callback_query(filters.regex(r"listpatner_(\d+)"))
@@ -407,11 +410,15 @@ async def handler_tagall_gc(client: Client, callback_query):
     
     # Periksa batas penggunaan
     if int(user_id) != OWNER_ID and not check_usage_limit(user_id):
-        return await client.send_message(user_id, "<b>🚫 Kamu telah mencapai batas penggunaan untuk hari ini. Silakan coba lagi besok.</b>")
+        return await client.send_message(user_id, "<b>⛔️ Kamu telah mencapai batas penggunaan untuk hari ini. Silakan coba lagi besok.</b>")
     
     # Periksa apakah bot memiliki hak admin
     if not await check_bot_admin(client, chat_id):
-        return await client.send_message(user_id, f"<b>🚫 Bot belum menjadi admin di grup {namagc}</b>")
+        return await client.send_message(user_id, f"<b>⛔️ Bot belum menjadi admin di grup {namagc}</b>")
+    
+    # Periksa apakah bot sedang tagall di 5 gc
+    if len(on_tagall) > 5:
+        return await client.send_message(user_id, "⛔️ | Saat ini sedang ada 5 obrolan yang tagall. Silakan coba 5 menit lagi")
     
     try:
         msg = await bot.ask(user_id, "Masukan Kata Tagall\nWaktumu 1 menit", timeout=60)
@@ -421,24 +428,64 @@ async def handler_tagall_gc(client: Client, callback_query):
     except Exception as e:
         return await bot.send_message(OWNER_ID, f"Error tagall {e}")
     
-    members = []
+    membersList = []
     if len(chats_member) == 0 or chat_id not in chats_member:
         async for member in client.get_chat_members(chat_id):
-            members.append(member.user.id)
+            if member.user.is_bot == True:
+              pass
+            elif member.user.is_deleted == True:
+              pass
+            else:
+                members.append(member.user.id)
+                
         chats_member[chat_id] = members
     members = chats_member.get(chat_id)
 
-    await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 3 menit")
+    await bot.send_message(user_id, f"Memulai Tagall di {namagc} Selama 2 menit")
     
     on_tagall.append(chat_id)
     start_time = datetime.now()
     end_time = start_time + timedelta(minutes=2)
     
-    await handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id)
-    
-    return
-    
-    
+    # await handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id)
+    msg_tagall_ = f"{msg_tagall}\n"
+    count = 0
+    try:
+        while len(members) > 0 and chat_id not in on_tagall:
+            if datetime.now() > end_time:
+                await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
+                on_tagall.remove(chat_id)
+                break
+            
+            count_per10 = 0
+            try:
+                while count_per10 > 10:
+                    member = membersList.pop(0)    
+                    user_mention = await mention_html(choice(emoticons), member)
+                    msg_tagall_ += f"{user_mention} "
+                    try:     
+                        await bot.send_message(chat_id, msg_tagall_)
+                        msg_tagall_ = f"{msg_tagall}\n"
+                    except Exception:
+                        pass  
+                    
+                    await asyncio.sleep(4) 
+                
+                count_per10 += 10
+                    
+            except IndexError:
+              try:
+                await bot.send_message(chat_id, msg_tagall_)
+                msg_tagall_ = f"{msg_tagall}\n"  
+              except Exception:
+                pass  
+            
+            count += count_per10
+        
+        await bot.send_message(chat_id, f"✅ | Successfully mentioned **{count} members.**")  
+          
+    except FloodWait as e:
+        await asyncio.sleep(e.value) 
     
     
 @bot.on_callback_query(filters.regex(r"listpartner_pagee_(\d+)"))
@@ -450,3 +497,4 @@ async def paginate_categories(client: Client, callback_query):
         reply_markup=InlineKeyboardMarkup(keyboard),
         parse_mode=enums.ParseMode.MARKDOWN
     )
+    
