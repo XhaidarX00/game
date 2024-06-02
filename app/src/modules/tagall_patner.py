@@ -452,7 +452,7 @@ async def handler_tagall_gc(client: Client, callback_query):
     msg_tagall_ = f"{msg_tagall}\n"
     count = 0
     try:
-        while len(membersList) > 0 and chat_id not in on_tagall:
+        while len(membersList) > 0 and chat_id in on_tagall:
             if datetime.now() > end_time:
                 await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
                 on_tagall.remove(chat_id)
