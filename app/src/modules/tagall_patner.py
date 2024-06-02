@@ -343,13 +343,13 @@ def check_usage_limit(user_id):
     return True
 
 from pyrogram.errors import ChatAdminRequired
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.enums import ChatMemberStatus as CMS
 
 # Fungsi untuk memeriksa apakah bot memiliki hak admin
 async def check_bot_admin(client, chat_id):
     try:
         member = await client.get_chat_member(chat_id, 'me')
-        if member.status ==  ChatMemberStatus.ADMINISTRATOR:
+        if member.status ==  CMS.ADMINISTRATOR:
             return True
         
     except ChatAdminRequired:
@@ -359,9 +359,8 @@ async def check_bot_admin(client, chat_id):
 async def check_user_admin(user_id, chat_id):
     try:
         member = await bot.get_chat_member(chat_id, user_id)
-        if member.status ==  ChatMemberStatus.ADMINISTRATOR:
+        if member.status in [CMS.ADMINISTRATOR, CMS.OWNER]:
             return True
-        
     except ChatAdminRequired:
         return False
 
