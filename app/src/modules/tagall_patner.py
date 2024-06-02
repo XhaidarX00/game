@@ -196,12 +196,14 @@ async def show_categories(client: Client, message: Message):
     name = message.from_user.first_name
     if len(list_partner) == 0 or len(user_ids_parter) == 0:
         list_partner_ = udb.read("GCTAGALLPATNER")
-        list_partner_ = ast.literal_eval(list_partner_)
-        ids_users = udb.read("USERTAGALLPATNER")
-        ids_users = ast.literal_eval(ids_users)
-        user_ids_parter += ids_users
+        if list_partner_:
+            list_partner_ = ast.literal_eval(list_partner_)
         if len(list_partner_) == 0:
             return await bot.send_message(chat_id, "List Patner Kosong!!")
+        ids_users = udb.read("USERTAGALLPATNER")
+        if ids_users:
+            ids_users = ast.literal_eval(ids_users)
+            user_ids_parter += ids_users
         else:
             user_ids_parter += ids_users
             list_partner.update(list_partner_)
