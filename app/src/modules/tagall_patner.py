@@ -208,16 +208,18 @@ async def show_categories(client: Client, message: Message):
             list_partner.update(list_partner_)
             list_partner = remove_duplicate_values(list_partner)
             
-    
-    message_text, keyboard = send_data_gc_patner()
-    user_mention_display = await mention_html(name, user_id)
-    text = f"Hai 👋 {user_mention_display}\n"
-    text += message_text
-    await client.send_message(
-        chat_id=message.chat.id,
-        text=text,
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+    if user_id in user_ids_parter:
+        message_text, keyboard = send_data_gc_patner()
+        user_mention_display = await mention_html(name, user_id)
+        text = f"Hai 👋 {user_mention_display}\n"
+        text += message_text
+        await client.send_message(
+            chat_id=message.chat.id,
+            text=text,
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+    else:
+        await bot.send_message(chat_id, "Kamu tidak punya aksess broo!!")
 
 
 
@@ -242,23 +244,23 @@ async def show_categories(client: Client, message: Message):
     
 
 # Menampilkan List Tagall
-@bot.on_message(filters.command('tgcancel'))
+@bot.on_message(filters.command('cancel'))
 async def show_categories(client: Client, message: Message):
     global on_tagall
     chat_id = message.chat.id
     user_id = message.from_user.id
     is_admin = await check_user_admin(user_id, chat_id)
-    await bot.send_message(OWNER_ID, f"{is_admin} {on_tagall} {chat_id}")
+    # await bot.send_message(OWNER_ID, f"{is_admin} {on_tagall} {chat_id}")
     if is_admin:
         if len(on_tagall) != 0:
             name_user = message.from_user.first_name
             user_mention_cancel = await mention_html(name_user, user_id)
             on_tagall.remove(chat_id)
-            return await bot.send_message(chat_id, f"Tagall dihentikan oleh {user_mention_cancel} !!")
+            return await bot.send_message(chat_id, f"🛑 Tagall dihentikan oleh {user_mention_cancel} !!")
         else:
-            return await bot.send_message(chat_id, f"Tidak ada tagall terdeteksi bro!!")
+            return await bot.send_message(chat_id, f"🛑 Tidak ada tagall terdeteksi bro!!")
     else:
-        return await bot.send_message(chat_id, f"Perintah hanya bisa untuk admin!!")
+        return await bot.send_message(chat_id, f"🛑 Perintah hanya bisa untuk admin!!")
     
 
 
@@ -367,41 +369,19 @@ async def check_user_admin(user_id, chat_id):
     except ChatAdminRequired:
         return False
 
-
-on_tagall = []
-
-async def handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id):
-    msg_tagall_ = f"{msg_tagall}\n"
-    count = 0
-    for index, member in enumerate(members):
-        if datetime.now() > end_time:
-            await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
-            on_tagall.remove(chat_id)
-            return
-
-        user_mention = await mention_html(choice(emoticons), member)
-        msg_tagall_ += f"{user_mention} "
-        
-        if (index + 1) % 10 == 0:
-            await client.send_message(chat_id, msg_tagall_)
-            await asyncio.sleep(3)
-            msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
-
-        count = index
-        if chat_id not in on_tagall:
-            return
-            # name_user = callback_query.from_user.first_name
-            # user_mention_cancel = await mention_html(name_user, user_id)
-            # return await bot.send_message(chat_id, f"Tagall Berhasil oleh {user_mention_cancel}")
+# periksa sisa waktu
+def countdown_timer(end_time):
+    current_time = datetime.now()
+    remaining_time = end_time - current_time
     
-    # if count % 10 == 1:
-    #     # await client.send_message(chat_id, msg_tagall_)
-    #     while len(membersList) > 0 and not stopProcess :
+    mins, secs = divmod(remaining_time.seconds, 60)
+    timer = '{:02d}:{:02d}'.format(mins, secs)
     
-    return
-
+    return timer
 
 from pyrogram.errors import FloodWait
+
+on_tagall = []
 
 # Definisikan fungsi untuk menangani tagall
 @bot.on_callback_query(filters.regex(r"listpatner_(\d+)"))
@@ -455,7 +435,7 @@ async def handler_tagall_gc(client: Client, callback_query):
     end_time = start_time + timedelta(minutes=2)
     
     # await handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id)
-    msg_tagall_ = f"{msg_tagall}\n"
+    msg_tagall_ = f"{msg_tagall}\n\n"
     count = 0
     try:
         while len(membersList) > 0 and chat_id in on_tagall:
@@ -474,18 +454,22 @@ async def handler_tagall_gc(client: Client, callback_query):
                     count_per10 += 1
                     
                 try:     
+                    sisa_waktu = countdown_timer(end_time)
+                    msg_tagall_ += f"\n\nSisa Waktu : {sisa_waktu}"
                     await bot.send_message(chat_id, msg_tagall_)
-                    msg_tagall_ = f"{msg_tagall}\n"
+                    msg_tagall_ = f"{msg_tagall}\n\n"
                 except Exception:
                     pass  
                 
-                count += 10
+                # count += 10
                 await asyncio.sleep(4)
                 
             except IndexError:
               try:
+                sisa_waktu = countdown_timer(end_time)
+                msg_tagall_ += f"\n\nSisa Waktu : {sisa_waktu}"
                 await bot.send_message(chat_id, msg_tagall_)
-                msg_tagall_ = f"{msg_tagall}\n"  
+                msg_tagall_ = f"{msg_tagall}\n\n"  
               except Exception:
                 pass  
             
@@ -495,6 +479,10 @@ async def handler_tagall_gc(client: Client, callback_query):
           
     except FloodWait as e:
         await asyncio.sleep(e.value) 
+    
+    name = callback_query.from_user.first_name
+    user_mention = await mention_html(name, user_id)
+    await bot.send_message(-1001920067433, f"{user_mention} Melakukan tagall")
     
     
 @bot.on_callback_query(filters.regex(r"listpartner_pagee_(\d+)"))

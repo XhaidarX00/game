@@ -260,10 +260,10 @@ async def handle_anti_gcast(client, message):
             
             # if user_id not in is_admin and should_delete_message(text):
             if user_id not in is_admin and check_pesan(text, message_text):
-                    await client.delete_messages(chat_id, message_id)
-                    notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
-                    await asyncio.sleep(1)
-                    await client.delete_messages(chat_id, notif.id)
+                await client.delete_messages(chat_id, message_id)
+                notif = await client.send_message(chat_id, f"ᴘᴇꜱᴀɴ ᴅᴀʀɪ ᴛᴇʟᴀʜ {mention} ᴛᴇʀʜᴀᴘᴜꜱ")
+                await asyncio.sleep(2)
+                await client.delete_messages(chat_id, notif.id)
     except:
         pass
             
