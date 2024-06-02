@@ -363,6 +363,36 @@ async def check_user_admin(user_id, chat_id):
 
 on_tagall = []
 
+async def handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id):
+    msg_tagall_ = f"{msg_tagall}\n"
+    count = 0
+    for index, member in enumerate(members):
+        if datetime.now() > end_time:
+            await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
+            on_tagall.remove(chat_id)
+            return
+
+        user_mention = await mention_html(choice(emoticons), member)
+        msg_tagall_ += f"{user_mention} "
+        
+        if (index + 1) % 10 == 0:
+            await client.send_message(chat_id, msg_tagall_)
+            await asyncio.sleep(3)
+            msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
+
+        count = index
+        if chat_id not in on_tagall:
+            return
+            # name_user = callback_query.from_user.first_name
+            # user_mention_cancel = await mention_html(name_user, user_id)
+            # return await bot.send_message(chat_id, f"Tagall Berhasil oleh {user_mention_cancel}")
+    
+    if count % 10 == 1:
+        await client.send_message(chat_id, msg_tagall_)
+    
+    return
+
+
 # Definisikan fungsi untuk menangani tagall
 @bot.on_callback_query(filters.regex(r"listpatner_(\d+)"))
 async def handler_tagall_gc(client: Client, callback_query):
@@ -404,31 +434,7 @@ async def handler_tagall_gc(client: Client, callback_query):
     start_time = datetime.now()
     end_time = start_time + timedelta(minutes=2)
     
-    msg_tagall_ = f"{msg_tagall}\n"
-    count = 0
-    for index, member in enumerate(members):
-        if datetime.now() > end_time:
-            await client.send_message(user_id, "<b>⏰ Waktu 2 menit telah habis! Tagall dihentikan.</b>")
-            on_tagall.remove(chat_id)
-            return
-
-        user_mention = await mention_html(choice(emoticons), member)
-        msg_tagall_ += f"{user_mention} "
-        
-        if (index + 1) % 10 == 0:
-            await client.send_message(chat_id, msg_tagall_)
-            await asyncio.sleep(3)
-            msg_tagall_ = f"{msg_tagall}\n"  # Reset message after sending
-
-        count = index
-        if chat_id not in on_tagall:
-            return
-            # name_user = callback_query.from_user.first_name
-            # user_mention_cancel = await mention_html(name_user, user_id)
-            # return await bot.send_message(chat_id, f"Tagall Berhasil oleh {user_mention_cancel}")
-    
-    if count % 10 == 1:
-        await client.send_message(chat_id, msg_tagall_)
+    await handler_tagall_process(client, members, end_time, chat_id, msg_tagall, user_id)
     
     return
     
