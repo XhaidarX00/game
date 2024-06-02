@@ -249,7 +249,7 @@ async def show_categories(client: Client, message: Message):
     user_id = message.from_user.id
     is_admin = await check_user_admin(user_id, chat_id)
     await bot.send_message(OWNER_ID, f"{is_admin} {on_tagall} {chat_id}")
-    if is_admin:
+    if is_admin and len(on_tagall) != 0:
         name_user = message.from_user.first_name
         user_mention_cancel = await mention_html(name_user, user_id)
         on_tagall.remove(chat_id)
