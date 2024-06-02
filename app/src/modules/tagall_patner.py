@@ -460,7 +460,7 @@ async def handler_tagall_gc(client: Client, callback_query):
             
             count_per10 = 0
             try:
-                while count_per10 > 10:
+                while count_per10 < 10:
                     member = membersList.pop(0)    
                     user_mention = await mention_html(choice(emoticons), member)
                     msg_tagall_ += f"{user_mention} "
@@ -469,10 +469,8 @@ async def handler_tagall_gc(client: Client, callback_query):
                         msg_tagall_ = f"{msg_tagall}\n"
                     except Exception:
                         pass  
-                    
-                    await asyncio.sleep(4) 
                 
-                count_per10 += 10
+                    count_per10 += 1
                     
             except IndexError:
               try:
@@ -482,6 +480,7 @@ async def handler_tagall_gc(client: Client, callback_query):
                 pass  
             
             count += count_per10
+            await asyncio.sleep(4) 
         
         await bot.send_message(chat_id, f"✅ | Successfully mentioned **{count} members.**")  
           
