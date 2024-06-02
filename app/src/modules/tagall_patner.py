@@ -242,17 +242,21 @@ async def show_categories(client: Client, message: Message):
     
 
 # Menampilkan List Tagall
-@bot.on_message(filters.command('cancel'))
+@bot.on_message(filters.command('tgcancel'))
 async def show_categories(client: Client, message: Message):
     global on_tagall
     chat_id = message.chat.id
     user_id = message.from_user.id
     is_admin = await check_user_admin(user_id, chat_id)
+    await bot.send_message(OWNER_ID, f"{is_admin} {on_tagall} {chat_id}")
     if is_admin:
         name_user = message.from_user.first_name
         user_mention_cancel = await mention_html(name_user, user_id)
         on_tagall.remove(chat_id)
         return await bot.send_message(chat_id, f"Tagall dihentikan oleh {user_mention_cancel} !!")
+    else:
+        return await bot.send_message(chat_id, f"Perintah hanya bisa untuk admin!!")
+    
 
 
 def send_data_gc_patner(page=0, per_page=4):
