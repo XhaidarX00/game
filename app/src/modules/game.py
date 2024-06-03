@@ -318,7 +318,7 @@ async def handler_truth(client, message):
     
     data = load_data_json('truth')
     question = random.choice(data)
-    mention = mention_html(name, user_id)
+    mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
     format_text = f"Truth untuk {mention} {emot}\n\n{question}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
@@ -344,7 +344,7 @@ async def handler_dare(client, message):
     
     data = load_data_json('dare')
     question = random.choice(data)
-    mention = mention_html(name, user_id)
+    mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
     format_text = f"Dare untuk {mention} {emot}\n\n{question}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
@@ -371,7 +371,7 @@ async def handler_random_truth_dare(client, message):
     random_ = random.choice(['truth', 'dare'])
     data = load_data_json(random_)
     question = random.choice(data)
-    mention = mention_html(name, user_id)
+    mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
     format_text = f"{random_.capitalize()} untuk {mention} {emot}\n\n{question}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
@@ -401,7 +401,7 @@ async def handler_gombal(client, message):
     
     data = load_data_json('bucin')
     kata_kata = random.choice(data)
-    mention = mention_html(name, user_id)
+    mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
     format_text = f"Gombal untuk {mention} {emot}\n\n{kata_kata}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
@@ -430,7 +430,7 @@ async def handler_motivasi(client, message):
     
     data = load_data_json('motivasi')
     kata_kata = random.choice(data)
-    mention = mention_html(name, user_id)
+    mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
     format_text = f"Motivasi untuk {mention} {emot}\n\n{kata_kata}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
