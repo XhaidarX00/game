@@ -35,10 +35,10 @@ in_kata_kata_chat_id = {}
 # Daftar kategori Game
 categories = [
     "ASAH OTAK",
-    "TEKA-TEKI"
+    "TEKA-TEKI",
     "FAMILY 100",
-    "SUSUN KATA"
-    "TEBAK GAMBAR"
+    "SUSUN KATA",
+    "TEBAK GAMBAR",
     "SIAPAKAH AKU?",
     "TEBAK - TEBAKAN",
     "TEBAKAN CAK LONTONG",
@@ -74,6 +74,7 @@ def get_random_question(category):
 
 # Fungsi untuk mengirim daftar kategori
 def send_categories(page=0, per_page=4):
+    global categories
     keyboard = []
     text = "\n"
     index_count = 0
@@ -100,7 +101,6 @@ def send_categories(page=0, per_page=4):
 
     if navigation_buttons:
         keyboard.append(navigation_buttons)
-    
     
     return text, keyboard
 
