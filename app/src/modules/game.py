@@ -174,7 +174,8 @@ async def hanler_choise_game(chat_id, category, jawab = False):
                 else:
                     format_text += f"{index + 1}. \n"
         else:
-            pass          
+            soal = question['soal']
+            format_text = f"GAME {category}\n\nPertanyaan : \n💁 {soal}?\n"          
                 
     else:
         if category != "TEBAK GAMBAR":
@@ -465,12 +466,10 @@ async def check_answer(client, message: Message):
                 if category != "FAMILY 100":
                     jawaban = question["jawaban"].strip().lower()
                     if message.text.strip().lower() == jawaban:
-                        format_jawab = f"Jawaban {mention} benar!\n tunggu 10 detik untuk next soalll.."
+                        format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
                         jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
+                        await asyncio.sleep(5)
                         await hanler_choise_game(chat_id, category, jawab=True)
-                        await asyncio.sleep(10)
-                        await hanler_choise_game(chat_id, category)
-                        await asyncio.sleep(2)
                         await bot.delete_messages(chat_id, jawab.id)
                 else:
                     jawaban = question["jawaban"]
