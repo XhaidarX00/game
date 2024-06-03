@@ -168,9 +168,11 @@ async def hanler_choise_game(chat_id, category, jawab = False):
             jawaban_user = jawaban_family100[chat_id]
             jawaban_soal = question['jawaban']
             format_text = f"💁 {soal}?\n"
-            for index, (key, value) in enumerate(jawaban_user.items()):
-                if jawaban_soal[index] == key:
-                    format_text += f"{index + 1}. {key} [+1 {value}]\n"
+            keys = [jawaban_user.keys()]
+            values = [jawaban_user.values()]
+            for index, value in enumerate(jawaban_soal):
+                if keys[index] == value:
+                    format_text += f"{index + 1}. {keys[index]} [+1 {values[index]}]\n"
                 else:
                     format_text += f"{index + 1}. \n"
         else:
@@ -194,18 +196,18 @@ async def hanler_choise_game(chat_id, category, jawab = False):
         else:
             soal = question['img']
             
-        format_text = f"GAME {category}\n\nPertanyaan : \n💁 {soal}?\n"
+        format_text = f"GAME {category}\n\n💁 {soal}?\n"
         if category == "FAMILY 100":
             jawaban = question['jawaban']
             for count in range(len(jawaban)):
                 format_text += f"{count + 1}.\n"
         elif category == "SUSUN KATA":
             clue = question['tipe']
-            format_text = f"Cluee: {clue}\n"
+            format_text += f"Cluee: {clue}\n"
         else:
             pass
             
-        format_text += f"waktumu 3 menit untuk menjawab!!" 
+        format_text += f"\nwaktumu 3 menit untuk menjawab!!" 
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
         
