@@ -22,8 +22,8 @@ class JSONLoader:
         return self.data.get(filename, None)
 
 # Contoh penggunaan
-directory_games = 'games'  # Ganti dengan path ke direktori yang berisi file JSON Anda
-directory_kata_kata = 'kata-kata'
+directory_games = 'app/database/dbgame/games'  # Ganti dengan path ke direktori yang berisi file JSON Anda
+directory_kata_kata = 'app/database/dbgame/kata-kata'
 
 def load_data_json(filename):
     # Membuat instance JSONLoader untuk setiap direktori
