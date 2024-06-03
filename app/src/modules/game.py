@@ -67,14 +67,14 @@ def choise_categories(category):
 def get_random_question(category):
     data = choise_categories(category)
     
-    datas = []
-    seen = set()
-    for data_ in data:
-        if data_ not in seen:
-            seen.add(data_)
-            datas.append(data_)
+    # datas = []
+    # seen = set()
+    # for data_ in data:
+    #     if data_ not in seen:
+    #         seen.add(data_)
+    #         datas.append(data_)
     
-    current_question = random.choice(datas)
+    current_question = random.choice(data)
     return current_question
 
 
@@ -505,8 +505,8 @@ async def check_answer(client, message: Message):
                             jawaban_family100[chat_id].update({jawab_user: mention})
                             
                         await bot.delete_messages(chat_id, id_msg)
-                        await asyncio.sleep(2)                   
                         await hanler_choise_game(chat_id, category, jawab=True)
+                        await asyncio.sleep(2)                   
                 
             if datetime.now() > end_time:
                 await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
