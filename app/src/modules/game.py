@@ -66,8 +66,15 @@ def choise_categories(category):
 
 def get_random_question(category):
     data = choise_categories(category)
-    current_question = random.choice(data)
     
+    datas = []
+    seen = set()
+    for data_ in data:
+        if data_ not in seen:
+            seen.add(data_)
+            datas.append(data_)
+    
+    current_question = random.choice(datas)
     return current_question
 
 
