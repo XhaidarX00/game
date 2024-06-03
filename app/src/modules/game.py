@@ -156,9 +156,9 @@ jawaban_family100 = {}
 
 async def hanler_choise_game(chat_id, category, jawab = False):
     global in_game_chat_id, jawaban_family100
-    question = get_random_question(category)
     format_text = None
     if jawab:
+        question = in_game_chat_id[chat_id]['question']
         if category == "TEBAKAN CAK LONTONG":
             jawaban = question['jawaban']
             deskripsi = question['deskripsi']
@@ -174,10 +174,21 @@ async def hanler_choise_game(chat_id, category, jawab = False):
                 else:
                     format_text += f"{index + 1}. \n"
         else:
-            soal = question['soal']
-            format_text = f"GAME {category}\n\nPertanyaan : \n💁 {soal}?\n"          
-                
+            return await hanler_choise_game(chat_id, category)
+        
+        send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
+        id_msg_jwb = send_msg_jawab.id
+        if in_game_chat_id[chat_id]["id_msg_jwb"]:
+            id_msg = in_game_chat_id[chat_id].get('id_msg_jwb', None)
+            await bot.delete_messages(chat_id, id_msg)
+            in_game_chat_id[chat_id].update({"id_msg_jwb": id_msg_jwb})
+        else:
+            in_game_chat_id[chat_id]["id_msg_jwb"] = {"id_msg_jwb": id_msg_jwb}
+        
+        return
+    
     else:
+        question = get_random_question(category)
         if category != "TEBAK GAMBAR":
             soal = question['soal']
         else:
@@ -198,20 +209,22 @@ async def hanler_choise_game(chat_id, category, jawab = False):
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
         
-    if chat_id in in_game_chat_id:
-        id_msg = in_game_chat_id[chat_id].get('id_msg', None)
-        await bot.delete_messages(chat_id, id_msg)
+        if chat_id in in_game_chat_id:
+            id_msg = in_game_chat_id[chat_id].get('id_msg', None)
+            await bot.delete_messages(chat_id, id_msg)
 
-    send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
-    id_msg = send_msg.id
-    end_time_total = start_time + timedelta(minutes=10)
-    in_game_chat_id[chat_id] = {
-        'category': category,
-        'id_msg': id_msg,
-        'question': question,
-        'endtime': end_time,
-        'endtimetotal': end_time_total
-    }
+        send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
+        id_msg = send_msg.id
+        end_time_total = start_time + timedelta(minutes=10)
+        in_game_chat_id[chat_id] = {
+            'category': category,
+            'id_msg': id_msg,
+            'question': question,
+            'endtime': end_time,
+            'endtimetotal': end_time_total
+        }
+        
+    return 
 
 
 async def handler_endtotal():
@@ -466,9 +479,9 @@ async def check_answer(client, message: Message):
                 if category != "FAMILY 100":
                     jawaban = question["jawaban"].strip().lower()
                     if message.text.strip().lower() == jawaban:
-                        format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
+                        # format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
+                        format_jawab = f"Jawaban {mention} benar!\n"
                         jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
-                        await asyncio.sleep(5)
                         await hanler_choise_game(chat_id, category, jawab=True)
                         await bot.delete_messages(chat_id, jawab.id)
                 else:
