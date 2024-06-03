@@ -496,9 +496,9 @@ async def check_answer(client, message: Message):
                         # format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
                         format_jawab = f"Jawaban {mention} benar!\n"
                         jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
+                        await hanler_choise_game(chat_id, category, jawab=True)
                         await asyncio.sleep(2)
                         await bot.delete_messages(chat_id, jawab.id)
-                        await hanler_choise_game(chat_id, category, jawab=True)
                 else:
                     jawaban = question["jawaban"]
                     jawab_user = message.text.strip().lower()
