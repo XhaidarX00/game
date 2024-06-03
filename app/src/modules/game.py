@@ -511,6 +511,9 @@ async def check_answer(client, message: Message):
                         await hanler_choise_game(chat_id, category, jawab=True)
                         await asyncio.sleep(2)                   
                         await bot.delete_messages(chat_id, id_msg)
+                        await bot.send_message(OWNER_ID, "pesan family 100 masuk jawaban")
+                        
+                    await bot.send_message(OWNER_ID, "pesan family 100 masuk bukan jawaban")
                 
             if datetime.now() > end_time:
                 await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
