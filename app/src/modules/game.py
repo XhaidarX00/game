@@ -279,7 +279,7 @@ async def endgame(client, message: Message):
         
     
 
-@bot.on_message(filters.command("help"))
+@bot.on_message(filters.command("helpp"))
 async def help(client, message: Message):
     chat_id = message.chat.id
     help_text = (
