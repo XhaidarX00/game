@@ -185,6 +185,7 @@ async def hanler_choise_game(chat_id, category, jawab = False):
         else:
             return await hanler_choise_game(chat_id, category)
         
+        await bot.send_message(OWNER_ID, f"Jawab : {format_text}")
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
         if in_game_chat_id[chat_id]["id_msg_jwb"]:
