@@ -129,7 +129,7 @@ async def show_categori_excecute(client: Client, callback_query):
     chat_id=callback_query.message.chat.id
     category_idx = int(callback_query.data.split("_")[1])
     category = categories[category_idx]
-    await hanler_choise_game(chat_id, category)
+    await handler_choice_game(chat_id, category)
     
 
 # Menampilkan List Tagall
@@ -161,7 +161,9 @@ async def handler_play(client, message):
 
 jawaban_family100 = {}
 
-async def hanler_choise_game(chat_id, category, jawab = False):
+from datetime import datetime, timedelta
+
+async def handler_choice_game(chat_id, category, jawab=False):
     global in_game_chat_id, jawaban_family100
     format_text = None
     if jawab:
@@ -175,29 +177,28 @@ async def hanler_choise_game(chat_id, category, jawab = False):
             jawaban_user = jawaban_family100[chat_id]
             jawaban_soal = question['jawaban']
             format_text = f"💁 {soal}?\n"
-            keys = [jawaban_user.keys()]
-            values = [jawaban_user.values()]
             for index, value in enumerate(jawaban_soal):
-                if keys[index] == value:
-                    format_text += f"{index + 1}. {keys[index]} [+1 {values[index]}]\n"
+                user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
+                user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
+                if user_key == value:
+                    format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
                 else:
                     format_text += f"{index + 1}. \n"
         else:
-            return await hanler_choise_game(chat_id, category)
+            return await handler_choice_game(chat_id, category, jawab=False)
         
-        # await bot.send_message(OWNER_ID, f"Jawab : {format_text}")
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
-        if in_game_chat_id[chat_id]["id_msg_jwb"]:
+        if 'id_msg_jwb' in in_game_chat_id[chat_id]:
             id_msg = in_game_chat_id[chat_id].get('id_msg_jwb', None)
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
             in_game_chat_id[chat_id].update({"id_msg_jwb": id_msg_jwb})
         else:
-            in_game_chat_id[chat_id]["id_msg_jwb"] = {"id_msg_jwb": id_msg_jwb}
+            in_game_chat_id[chat_id]["id_msg_jwb"] = id_msg_jwb
         
         if category != "FAMILY 100":
-            return await hanler_choise_game(chat_id, category)
+            return await handler_choice_game(chat_id, category, jawab=False)
         
         return 
     
@@ -215,9 +216,7 @@ async def hanler_choise_game(chat_id, category, jawab = False):
                 format_text += f"{count + 1}.\n"
         elif category == "SUSUN KATA":
             clue = question['tipe']
-            format_text += f"Cluee: {clue}\n"
-        else:
-            pass
+            format_text += f"Clue: {clue}\n"
             
         format_text += f"\nwaktumu 3 menit untuk menjawab!!" 
         start_time = datetime.now()
@@ -225,7 +224,8 @@ async def hanler_choise_game(chat_id, category, jawab = False):
         
         if chat_id in in_game_chat_id:
             id_msg = in_game_chat_id[chat_id].get('id_msg', None)
-            await bot.delete_messages(chat_id, id_msg)
+            if id_msg:
+                await bot.delete_messages(chat_id, id_msg)
 
         send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg = send_msg.id
@@ -238,7 +238,8 @@ async def hanler_choise_game(chat_id, category, jawab = False):
             'endtimetotal': end_time_total
         }
         
-    return 
+    return
+
 
 
 async def handler_endtotal():
@@ -272,7 +273,7 @@ async def skip(client, message: Message):
     chat_id = message.chat.id
     if in_game_chat_id[chat_id]:
         category = in_game_chat_id[chat_id]['category']
-        await hanler_choise_game(chat_id, category)
+        await handler_choice_game(chat_id, category)
     else:
         return await bot.send_message(chat_id, "Permainan Belum Dimulai\nKetik /play untuk memulai!!", protect_content=True)
     
@@ -283,8 +284,8 @@ async def nyerah(client, message: Message):
     chat_id = message.chat.id
     if in_game_chat_id[chat_id]:
         category = in_game_chat_id[chat_id]['category']
-        await hanler_choise_game(chat_id, category, jawab=True)
-        await hanler_choise_game(chat_id, category)
+        await handler_choice_game(chat_id, category, jawab=True)
+        await handler_choice_game(chat_id, category)
     else:
         pass
 
@@ -496,7 +497,7 @@ async def check_answer(client, message: Message):
                         # format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
                         format_jawab = f"Jawaban {mention} benar!\n"
                         jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
-                        await hanler_choise_game(chat_id, category, jawab=True)
+                        await handler_choice_game(chat_id, category, jawab=True)
                         await asyncio.sleep(2)
                         await bot.delete_messages(chat_id, jawab.id)
                 else:
@@ -508,7 +509,7 @@ async def check_answer(client, message: Message):
                         else:
                             jawaban_family100[chat_id].update({jawab_user: mention})
                             
-                        await hanler_choise_game(chat_id, category, jawab=True)
+                        await handler_choice_game(chat_id, category, jawab=True)
                         await asyncio.sleep(2)                   
                         await bot.delete_messages(chat_id, id_msg)
                         await bot.send_message(OWNER_ID, "pesan family 100 masuk jawaban")
@@ -517,7 +518,7 @@ async def check_answer(client, message: Message):
                 
             if datetime.now() > end_time:
                 await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
-                return await hanler_choise_game(chat_id, category)        
+                return await handler_choice_game(chat_id, category)        
     except:
         pass
     
