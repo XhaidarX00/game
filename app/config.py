@@ -1,13 +1,13 @@
 ## CONFIGURATION FILE
 
 # Bot session name
-session_name_bot = 'gemini_bot'
+session_name_bot = 'haidar_multi_game_bot'
 
 API_ID = 18207302
 
 API_HASH = 'a2526b0eea73aa82080ab181f03e0149'
 
-BOT_TOKEN = '6226509553:AAF4fnIOtCKoj93ORg0bFgvm4VO1w9rlLjY'
+BOT_TOKEN = '6369184612:AAHocf8RecdUJI4n9GF-H0iRpRaVeEMbD1M'
 
 OWNER_ID = 2099942562
 
