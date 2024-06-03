@@ -181,19 +181,19 @@ async def hanler_choise_game(chat_id, category, jawab = False):
             soal = question['soal']
         else:
             soal = question['img']
+            
         format_text = f"GAME {category}\n\nPertanyaan : \n💁 {soal}?\n"
-        
         if category == "FAMILY 100":
             jawaban = question['jawaban']
             for count in range(len(jawaban)):
                 format_text += f"{count + 1}.\n"
         elif category == "SUSUN KATA":
             clue = question['tipe']
-            format_text = f"Cluee: {clue}\n" 
+            format_text = f"Cluee: {clue}\n"
         else:
             pass
             
-        format_text = f"waktumu 3 menit untuk menjawab!!" 
+        format_text += f"waktumu 3 menit untuk menjawab!!" 
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
         
