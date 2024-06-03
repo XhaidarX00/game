@@ -196,9 +196,9 @@ async def hanler_choise_game(chat_id, category, jawab = False):
         format_text = f"waktumu 3 menit untuk menjawab!!" 
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
-    
-    id_msg = in_game_chat_id[chat_id].get('id_msg', None)
-    if id_msg:
+        
+    if chat_id in in_game_chat_id:
+        id_msg = in_game_chat_id[chat_id].get('id_msg', None)
         await bot.delete_messages(chat_id, id_msg)
 
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
