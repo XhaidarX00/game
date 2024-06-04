@@ -176,8 +176,6 @@ async def handler_choice_game(chat_id, category, jawab=None):
             soal = question['soal']
             jawaban_user = jawaban_family100[chat_id]
             jawaban_soal = question['jawaban']
-            if len(jawaban_soal) == len(jawaban_family100):
-                return await handler_choice_game(chat_id, category)
             
             await bot.send_message(OWNER_ID, f"{jawaban_soal} \n\n{jawaban_user}")
             format_text = f"💁 {soal}?\n"
@@ -188,6 +186,13 @@ async def handler_choice_game(chat_id, category, jawab=None):
                     format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
                 else:
                     format_text += f"{index + 1}. \n"
+            
+            if len(jawaban_soal) == len(jawaban_family100):
+                send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
+                id_msg_jwb = send_msg_jawab.id
+                in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
+                await asyncio.sleep(2)
+                return await handler_choice_game(chat_id, category)
         else:
             return await handler_choice_game(chat_id, category)
         
@@ -339,7 +344,7 @@ async def help(client, message: Message):
         "  /skip - untuk next ke pertanyaan selanjutnya\n"
         "  /nyerah - untuk menyerah\n"
         "  /stop - untuk menyelesaikan permainan\n"
-        "  /help - untuk memberikan menu bantuan\n"
+        "  /helpp - untuk memberikan menu bantuan\n"
         "  /truth - untuk memulai game truth\n"
         "  /dare - untuk memulai game dare\n"
         "  /rendom - untuk memilih random truth atau dare\n"
