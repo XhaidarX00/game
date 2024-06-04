@@ -160,7 +160,6 @@ async def handler_play(client, message):
     
 
 jawaban_family100 = {}
-
 from datetime import datetime, timedelta
 
 async def handler_choice_game(chat_id, category, jawab=False):
