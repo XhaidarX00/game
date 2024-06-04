@@ -175,7 +175,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         format_text = f"💁 {soal}?\n"
         if category == "TEBAKAN CAK LONTONG":
             deskripsi = question['deskripsi']
-            format_text = f"Jawaban: {jawaban}\n\n{deskripsi}"
+            format_text = f"Jawaban: {jawaban}\n\n{deskripsi}\n"
         elif category == "FAMILY 100":
             jawaban_user = jawaban_family100[chat_id]
             jawaban = question['jawaban']
@@ -274,8 +274,10 @@ async def handler_endtotal():
                 
             await bot.send_message(chat_id, "<b>⏰ Waktu tunggu 10 menit telah habis!\nPermainan dihentikan total!!</b>", protect_content=True)
             del in_game_chat_id[chat_id]
+            
+            return True
         else:
-            pass
+            return None
     
     
 
@@ -500,14 +502,26 @@ async def handler_motivasi(client, message):
 async def check_answer(client, message: Message):
     global in_game_chat_id, jawaban_family100
     chat_id = message.chat.id
-
+    
+    if chat_id in in_game_chat_id:
+        game_data = in_game_chat_id[chat_id]
+        end_time = game_data["endtime"]
+        if datetime.now() > end_time:
+            await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
+            return await handler_choice_game(chat_id, category)
+            
+        # endtotal ketika tidak ada permainan selama 10 menit
+        endtotal = await handler_endtotal()
+        if endtotal:
+            return
+        
     if not (message.reply_to_message and chat_id in in_game_chat_id):
         return
-
+    
     game_data = in_game_chat_id[chat_id]
+    end_time = game_data["endtime"]
     question = game_data["question"]
     category = game_data["category"]
-    end_time = game_data["endtime"]
     id_msg = game_data["id_msg"]
 
     if int(message.reply_to_message.id) != int(id_msg):
@@ -522,10 +536,10 @@ async def check_answer(client, message: Message):
 
     if category != "FAMILY 100":
         if jawab_user == question["jawaban"].strip().lower():
-            format_jawab = f"Jawaban {mention} benar!\n"
+            format_jawab = f"Jawaban {mention} benar!\n\nMenunggu 5 detik ke soal selanjutnya!!"
             jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
             await handler_choice_game(chat_id, category, jawab=True)
-            await bot.delete_messages(chat_id, jawab.id)
+            return await bot.delete_messages(chat_id, jawab.id)
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
@@ -545,12 +559,4 @@ async def check_answer(client, message: Message):
                 id_msg = in_game_chat_id[chat_id]['id_msg']
                 await handler_choice_game(chat_id, category)
             
-            await bot.delete_messages(chat_id, id_msg)
-            
-    if datetime.now() > end_time:
-        await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
-        await handler_choice_game(chat_id, category)
-
-
-    # endtotal ketika tidak ada permainan selama 10 menit
-    await handler_endtotal()
+            return await bot.delete_messages(chat_id, id_msg)
