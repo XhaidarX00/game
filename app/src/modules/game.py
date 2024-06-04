@@ -161,7 +161,14 @@ async def handler_play(client, message):
         protect_content=True
     )
     
-    
+
+async def delete_message(chat_id):
+    global in_game_chat_id
+    if in_game_chat_id_jawab.get(chat_id, None):
+        id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
+        if id_msg:
+            await bot.delete_messages(chat_id, id_msg)
+            
 
 async def handler_choice_game(chat_id, category, jawab=None):
     global in_game_chat_id, jawaban_family100, in_game_chat_id_jawab
@@ -191,11 +198,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         else:
             return await handler_choice_game(chat_id, category)
         
-        if in_game_chat_id_jawab.get(chat_id, None):
-            id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
-            if id_msg:
-                await bot.delete_messages(chat_id, id_msg)
-                    
+        await delete_message(chat_id)           
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
         if category != "FAMILY 100":
@@ -493,7 +496,7 @@ async def handler_motivasi(client, message):
         'id_msg': send_msg.id
     }
     
-    
+                   
 
 
 # handler untuk excecute game
@@ -536,6 +539,8 @@ async def check_answer(client, message: Message):
 
     if category != "FAMILY 100":
         if jawab_user == question["jawaban"].strip().lower():
+            await delete_message(chat_id)
+                    
             format_jawab = f"Jawaban {mention} benar!\n\nMenunggu 5 detik ke soal selanjutnya!!"
             jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
             await handler_choice_game(chat_id, category, jawab=True)
