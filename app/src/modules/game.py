@@ -167,7 +167,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
     global in_game_chat_id, jawaban_family100, in_game_chat_id_jawab
     format_text = None
     id_msg = None
-    await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}")
+    await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}\n\n{jawaban_family100}")
     if jawab:
         question = in_game_chat_id[chat_id]['question']
         if category == "TEBAKAN CAK LONTONG":
@@ -524,12 +524,13 @@ async def check_answer(client, message: Message):
         if jawab_user in jawaban:
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
+                await bot.delete_messages(chat_id, id_msg)
+                await handler_choice_game(chat_id, category, jawab=True)
                 
             list_jawaban = list(jawaban_family100[chat_id].keys())
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
-                await asyncio.sleep(1)
                 await handler_choice_game(chat_id, category, jawab=True)
 
             else:
