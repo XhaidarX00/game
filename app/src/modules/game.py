@@ -520,11 +520,10 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
-            list_jawaban = list(jawaban_family100[chat_id].keys())
-            
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
                 
+            list_jawaban = list(jawaban_family100[chat_id].keys())
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
