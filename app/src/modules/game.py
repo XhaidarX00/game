@@ -166,27 +166,23 @@ async def handler_choice_game(chat_id, category, jawab=None):
     format_text = None
     id_msg = None
     soal = None
-    # await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}\n\n{jawaban_family100}")
     if jawab:
         question = in_game_chat_id[chat_id]['question']
+        soal = question['soal']
+        format_text = f"💁 {soal}?\n"
         if category == "TEBAKAN CAK LONTONG":
             jawaban = question['jawaban']
             deskripsi = question['deskripsi']
             format_text = f"Jawaban: {jawaban}\n{deskripsi}"
-        # elif category == "FAMILY 100":
-            # soal = question['soal']
-            # jawaban_user = jawaban_family100[chat_id]
-            # jawaban_soal = question['jawaban']
-            
-            # # await bot.send_message(OWNER_ID, f"{jawaban_soal} \n\n{jawaban_user}")
-            # format_text = f"💁 {soal}?\n"
-            # for index, value in enumerate(jawaban_soal):
-            #     user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
-            #     user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
-            #     if user_key == value:
-            #         format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
-            #     else:
-            #         format_text += f"{index + 1}. \n"
+        elif category == "FAMILY 100":
+            jawaban_user = jawaban_family100[chat_id]
+            jawaban_soal = question['jawaban']
+            for index, value in enumerate(jawaban_soal):
+                if value in jawaban_user:
+                    user_mention = jawaban_user[value]
+                    format_text += f"{index + 1}. {value} [+1 {user_mention}]\n"
+                else:
+                    format_text += f"{index + 1}. \n"
         else:
             return await handler_choice_game(chat_id, category)
         
@@ -305,7 +301,7 @@ async def nyerah(client, message: Message):
         category = in_game_chat_id[chat_id]['category']
         if category != "FAMILY 100":
             await handler_choice_game(chat_id, category, jawab=True)
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
         await handler_choice_game(chat_id, category)
     else:
         return await bot.send_message(chat_id, "Permainan Belum Dimulai\nKetik /play untuk memulai!!", protect_content=True)
@@ -489,23 +485,7 @@ async def handler_motivasi(client, message):
     await handler_delete_inkata(chat_id)
     in_kata_kata_chat_id[chat_id] = {
         'id_msg': send_msg.id
-    }  
-
-
-
-
-async def handler_family100(chat_id, soal, jawaban_soal, jawaban_user):
-    format_text = f"💁 {soal}?\n"
-    for index, value in enumerate(jawaban_soal):
-        if value in jawaban_user:
-            user_mention = jawaban_user[value]
-            format_text += f"{index + 1}. {value} [+1 {user_mention}]\n"
-        else:
-            format_text += f"{index + 1}. \n"
-            
-    send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
-    id_msg_jwb = send_msg_jawab.id
-    in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
+    }
     
     
 
@@ -545,31 +525,24 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
-            soal = game_data["soal"]
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
-                await bot.delete_messages(chat_id, id_msg)
-                await handler_family100(chat_id, soal, jawaban, jawaban_family100[chat_id])
+                await handler_choice_game(chat_id, category, jawab=True)
                 
             list_jawaban = list(jawaban_family100[chat_id].keys())
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
-                await bot.delete_messages(chat_id, id_msg)
-                await asyncio.sleep(1)
-                await handler_family100(chat_id, soal, jawaban, jawaban_family100[chat_id])
+                await handler_choice_game(chat_id, category, jawab=True)
             else:
                 pass
                 
             if len(jawaban) == len(jawaban_family100[chat_id]):
-                await asyncio.sleep(1)
-                id_msg_jwb = in_game_chat_id[chat_id]['id_msg']
-                await bot.delete_messages(chat_id, id_msg_jwb)
-                return await handler_choice_game(chat_id, category)
+                await asyncio.sleep(2)
+                id_msg = in_game_chat_id[chat_id]['id_msg']
+                await handler_choice_game(chat_id, category)
             
-            # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
-                
-        # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
-    
+            await bot.delete_messages(chat_id, id_msg)
+            
     if datetime.now() > end_time:
         await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
         await handler_choice_game(chat_id, category)
