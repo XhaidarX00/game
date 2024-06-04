@@ -541,11 +541,11 @@ async def check_answer(client, message: Message):
             else:
                 pass
                 
-        if len(jawaban) == len(jawaban_family100[chat_id]):
-            await asyncio.sleep(2)
-            id_msg_jwb = in_game_chat_id[chat_id]['id_msg']
-            await bot.delete_messages(chat_id, id_msg_jwb)
-            return await handler_choice_game(chat_id, category)
+            if len(jawaban) == len(jawaban_family100[chat_id]):
+                await asyncio.sleep(2)
+                id_msg_jwb = in_game_chat_id[chat_id]['id_msg']
+                await bot.delete_messages(chat_id, id_msg_jwb)
+                return await handler_choice_game(chat_id, category)
             
             # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
