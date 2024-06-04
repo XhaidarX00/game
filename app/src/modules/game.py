@@ -503,6 +503,8 @@ async def handler_family100(chat_id, soal, jawaban_soal, jawaban_user):
             format_text += f"{index + 1}. \n"
         else:
             format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
+        
+        await bot.send_message(OWNER_ID, f"{user_key} = {value} \n{user_value}")
     
     send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
     id_msg_jwb = send_msg_jawab.id
