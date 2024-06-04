@@ -497,15 +497,12 @@ async def handler_motivasi(client, message):
 async def handler_family100(chat_id, soal, jawaban_soal, jawaban_user):
     format_text = f"💁 {soal}?\n"
     for index, value in enumerate(jawaban_soal):
-        user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
-        user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
-        if user_key != value:
-            format_text += f"{index + 1}. \n"
+        if value in jawaban_user:
+            user_mention = jawaban_user[value]
+            format_text += f"{index + 1}. {value} [+1 {user_mention}]\n"
         else:
-            format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
-        
-        await bot.send_message(OWNER_ID, f"{user_key} = {value} \n{user_value}\n{jawaban_user}\n{jawaban_soal}")
-    
+            format_text += f"{index + 1}. \n"
+            
     send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
     id_msg_jwb = send_msg_jawab.id
     in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
