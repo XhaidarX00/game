@@ -203,7 +203,11 @@ async def handler_choice_game(chat_id, category, jawab=None):
             return await handler_choice_game(chat_id, category)
         else:
             in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
-            
+        
+        start_time = datetime.now()
+        end_time = start_time + timedelta(minutes=3)
+        in_game_chat_id[chat_id]['endtime'] = end_time
+        
         return
     
     else:
@@ -304,7 +308,8 @@ async def nyerah(client, message: Message):
         await asyncio.sleep(2)
         await handler_choice_game(chat_id, category)
     else:
-        pass
+        return await bot.send_message(chat_id, "Permainan Belum Dimulai\nKetik /play untuk memulai!!", protect_content=True)
+    
 
 
 @bot.on_message(filters.command("stop"))
