@@ -244,6 +244,9 @@ async def handler_choice_game(chat_id, category, jawab=None):
         'endtime': end_time,
         'endtimetotal': end_time_total
     }
+    
+    if in_game_chat_id_jawab[chat_id]:
+        del in_game_chat_id_jawab[chat_id]
         
     return
 
