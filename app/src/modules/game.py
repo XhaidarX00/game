@@ -179,6 +179,7 @@ async def handler_choice_game(chat_id, category, jawab=False):
             if len(jawaban_soal) == len(jawaban_family100):
                 return await handler_choice_game(chat_id, category)
             
+            await bot.send_message(OWNER_ID, f"{jawaban_soal} \n\n{jawaban_user}")
             format_text = f"💁 {soal}?\n"
             for index, value in enumerate(jawaban_soal):
                 user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
@@ -514,12 +515,12 @@ async def check_answer(client, message: Message):
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
             if chat_id not in jawaban_family100:
-                jawaban_family100[chat_id] = {}
+                jawaban_family100[chat_id] = {jawab_user: mention}
             if jawab_user not in jawaban_family100[chat_id]:
-                jawaban_family100[chat_id][jawab_user] = mention
+                jawaban_family100[chat_id].update({jawab_user: mention})
                 await handler_choice_game(chat_id, category, jawab=True)
                 await bot.delete_messages(chat_id, id_msg)
-                await bot.send_message(OWNER_ID, f"{jawaban_family100}\n\npesan family 100 masuk jawaban")
+                await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
     
     if datetime.now() > end_time:
         await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
