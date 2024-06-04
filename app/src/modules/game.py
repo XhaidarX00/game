@@ -196,17 +196,14 @@ async def handler_choice_game(chat_id, category, jawab=None):
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
         if in_game_chat_id_jawab.get(chat_id, None):
-            id_msg = in_game_chat_id_jawab[chat_id].get('id_msg_jwb', None)
+            id_msg = in_game_chat_id_jawab[chat_id]
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
-            in_game_chat_id_jawab[chat_id].update({"id_msg_jwb": id_msg_jwb})
-        else:
-            in_game_chat_id_jawab[chat_id]["id_msg_jwb"] = id_msg_jwb
-        
+                
+        in_game_chat_id_jawab[chat_id] = id_msg_jwb
         if category != "FAMILY 100":
             return await handler_choice_game(chat_id, category)
-        
-        return 
+        return
     
     else:
         question = get_random_question(category)
@@ -245,8 +242,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         'endtimetotal': end_time_total
     }
 
-    id_msg_jwb_ = in_game_chat_id_jawab.get(chat_id, None)
-    if id_msg_jwb_:
+    if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
         del in_game_chat_id_jawab[chat_id]
         
     return
@@ -254,7 +250,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
 
 
 async def handler_endtotal():
-    global in_game_chat_id
+    global in_game_chat_id, in_game_chat_id_jawab
     
     for chat_id, value in in_game_chat_id.items():
         end_time = value.get('endtimetotal')
@@ -263,10 +259,14 @@ async def handler_endtotal():
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
                 
+            if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
+                del in_game_chat_id_jawab[chat_id]
+                
             await bot.send_message(chat_id, "<b>⏰ Waktu tunggu 10 menit telah habis!\nPermainan dihentikan total!!</b>", protect_content=True)
             del in_game_chat_id[chat_id]
         else:
             pass
+    
     
 
 async def handler_delete_inkata(chat_id):
@@ -520,16 +520,19 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
+            list_jawaban = list(jawaban_family100[chat_id].keys())
             
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
                 
-            if jawab_user not in list(jawaban_family100[chat_id].keys()):
+            if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
-                await handler_choice_game(chat_id, category, jawab=True)
                 await bot.delete_messages(chat_id, id_msg)
+                await asyncio.sleep(1)
+                await handler_choice_game(chat_id, category, jawab=True)
+                await asyncio.sleep(2)
             else:
-                await bot.send_message(OWNER_ID, f" jawban user in jawaban family {jawab_user}")
+                pass
                 
             # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
