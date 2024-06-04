@@ -172,20 +172,20 @@ async def handler_choice_game(chat_id, category, jawab=None):
             jawaban = question['jawaban']
             deskripsi = question['deskripsi']
             format_text = f"Jawaban: {jawaban}\n{deskripsi}"
-        elif category == "FAMILY 100":
-            soal = question['soal']
-            jawaban_user = jawaban_family100[chat_id]
-            jawaban_soal = question['jawaban']
+        # elif category == "FAMILY 100":
+            # soal = question['soal']
+            # jawaban_user = jawaban_family100[chat_id]
+            # jawaban_soal = question['jawaban']
             
-            # await bot.send_message(OWNER_ID, f"{jawaban_soal} \n\n{jawaban_user}")
-            format_text = f"💁 {soal}?\n"
-            for index, value in enumerate(jawaban_soal):
-                user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
-                user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
-                if user_key == value:
-                    format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
-                else:
-                    format_text += f"{index + 1}. \n"
+            # # await bot.send_message(OWNER_ID, f"{jawaban_soal} \n\n{jawaban_user}")
+            # format_text = f"💁 {soal}?\n"
+            # for index, value in enumerate(jawaban_soal):
+            #     user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
+            #     user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
+            #     if user_key == value:
+            #         format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
+            #     else:
+            #         format_text += f"{index + 1}. \n"
         else:
             return await handler_choice_game(chat_id, category)
         
@@ -492,6 +492,26 @@ async def handler_motivasi(client, message):
 
 
 
+async def handler_family100(chat_id, jawaban_soal, jawaban_user):
+    global in_game_chat_id
+    game_data = in_game_chat_id[chat_id]
+    soal = game_data['soal']
+    
+    format_text = f"💁 {soal}?\n"
+    for index, value in enumerate(jawaban_soal):
+        user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
+        user_value = list(jawaban_user.values())[index] if index < len(jawaban_user) else None
+        if user_key != value:
+            format_text += f"{index + 1}. \n"
+        else:
+            format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
+    
+    send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
+    id_msg_jwb = send_msg_jawab.id
+    in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
+    
+    
+
 
 # handler untuk excecute game
 
@@ -531,14 +551,14 @@ async def check_answer(client, message: Message):
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
                 await bot.delete_messages(chat_id, id_msg)
-                await handler_choice_game(chat_id, category, jawab=True)
+                await handler_family100(chat_id, jawaban, jawaban_family100[chat_id])
                 
             list_jawaban = list(jawaban_family100[chat_id].keys())
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
                 await asyncio.sleep(1)
-                await handler_choice_game(chat_id, category, jawab=True)
+                await handler_family100(chat_id, jawaban, jawaban_family100[chat_id])
             else:
                 pass
                 
