@@ -249,8 +249,8 @@ async def handler_choice_game(chat_id, category, jawab=False):
 async def handler_endtotal():
     global in_game_chat_id
     
-    for chat_id in in_game_chat_id:
-        end_time = chat_id['endtimetotal']
+    for chat_id, value in in_game_chat_id.items():
+        end_time = value.get('endtimetotal')
         if datetime.now() > end_time:
             id_msg = chat_id.get('id_msg', None)
             if id_msg:
