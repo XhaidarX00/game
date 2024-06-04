@@ -137,7 +137,7 @@ async def show_categori_excecute(client: Client, callback_query):
     
 
 # Menampilkan List Tagall
-@bot.on_message(filters.command("play"))
+@bot.on_message(filters.command("game"))
 async def handler_play(client, message):
     global in_game_chat_id
     chat_id = message.chat.id
@@ -317,7 +317,7 @@ async def nyerah(client, message: Message):
     
 
 
-@bot.on_message(filters.command("stop"))
+@bot.on_message(filters.command("endgame"))
 async def endgame(client, message: Message):
     global in_game_chat_id, in_kata_kata_chat_id
     chat_id = message.chat.id
@@ -340,10 +340,10 @@ async def help(client, message: Message):
     chat_id = message.chat.id
     help_text = (
         "<b>`◉` Game : </b>\n"
-        "  /play - untuk memulai game\n"
+        "  /game - untuk memulai game\n"
         "  /skip - untuk next ke pertanyaan selanjutnya\n"
         "  /nyerah - untuk menyerah\n"
-        "  /stop - untuk menyelesaikan permainan\n"
+        "  /endgame - untuk menyelesaikan permainan\n"
         "  /helpp - untuk memberikan menu bantuan\n"
         "  /truth - untuk memulai game truth\n"
         "  /dare - untuk memulai game dare\n"
