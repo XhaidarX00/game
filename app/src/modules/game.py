@@ -160,10 +160,11 @@ async def handler_play(client, message):
     
 
 jawaban_family100 = {}
+in_game_chat_id_jawab = {}
 from datetime import datetime, timedelta
 
-async def handler_choice_game(chat_id, category, jawab=False):
-    global in_game_chat_id, jawaban_family100
+async def handler_choice_game(chat_id, category, jawab=None):
+    global in_game_chat_id, jawaban_family100, in_game_chat_id_jawab
     format_text = None
     id_msg = None
     await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}")
@@ -194,13 +195,13 @@ async def handler_choice_game(chat_id, category, jawab=False):
         
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
-        if 'id_msg_jwb' in in_game_chat_id[chat_id]:
-            id_msg = in_game_chat_id[chat_id].get('id_msg_jwb', None)
+        if in_game_chat_id_jawab[chat_id]:
+            id_msg = in_game_chat_id_jawab[chat_id].get('id_msg_jwb', None)
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
-            in_game_chat_id[chat_id].update({"id_msg_jwb": id_msg_jwb})
+            in_game_chat_id_jawab[chat_id].update({"id_msg_jwb": id_msg_jwb})
         else:
-            in_game_chat_id[chat_id]["id_msg_jwb"] = id_msg_jwb
+            in_game_chat_id_jawab[chat_id]["id_msg_jwb"] = id_msg_jwb
         
         if category != "FAMILY 100":
             return await handler_choice_game(chat_id, category)
