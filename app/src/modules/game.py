@@ -541,7 +541,7 @@ async def check_answer(client, message: Message):
             else:
                 pass
                 
-        if len(jawaban) == len(jawaban_family100):
+        if len(jawaban) == len(jawaban_family100[chat_id]):
             await asyncio.sleep(2)
             id_msg_jwb = in_game_chat_id[chat_id]['id_msg']
             await bot.delete_messages(chat_id, id_msg_jwb)
@@ -549,7 +549,7 @@ async def check_answer(client, message: Message):
             
             # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
-        # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
+        await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
     
     if datetime.now() > end_time:
         await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
