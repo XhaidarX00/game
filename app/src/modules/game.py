@@ -482,50 +482,48 @@ async def handler_motivasi(client, message):
 async def check_answer(client, message: Message):
     global in_game_chat_id, jawaban_family100
     chat_id = message.chat.id
-    try:
-        if message.reply_to_message and chat_id in in_game_chat_id:
-            question = in_game_chat_id[chat_id]["question"]
-            category = in_game_chat_id[chat_id]["category"]
-            end_time = in_game_chat_id[chat_id]["endtime"]
-            id_msg = in_game_chat_id[chat_id]["id_msg"]
-            if int(message.reply_to_message.id) == int(id_msg):
-                nama = message.from_user.first_name
-                if message.from_user.last_name:
-                    nama += f" {message.from_user.last_name}"
-                mention = await mention_html(nama, message.from_user.id)
-                
-                if category != "FAMILY 100":
-                    jawaban = question["jawaban"].strip().lower()
-                    if message.text.strip().lower() == jawaban:
-                        # format_jawab = f"Jawaban {mention} benar!\n tunggu 5 detik untuk next soalll.."
-                        format_jawab = f"Jawaban {mention} benar!\n"
-                        jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
-                        await handler_choice_game(chat_id, category, jawab=True)
-                        await asyncio.sleep(2)
-                        await bot.delete_messages(chat_id, jawab.id)
-                else:
-                    jawaban = question["jawaban"]
-                    jawab_user = message.text.strip().lower()
-                    if jawab_user in jawaban:
-                        if chat_id not in jawaban_family100:
-                            jawaban_family100[chat_id] = {jawab_user: mention}
-                        else:
-                            if jawab_user not in jawaban_family100[chat_id]:
-                                jawaban_family100[chat_id].update({jawab_user: mention})
-                                await handler_choice_game(chat_id, category, jawab=True)
-                                await bot.delete_messages(chat_id, id_msg)
-                                await bot.send_message(OWNER_ID, f"{jawaban_family100}\n\npesan family 100 masuk jawaban")
-                            else:
-                                 pass
-                                                
-            if datetime.now() > end_time:
-                await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
-                return await handler_choice_game(chat_id, category)
-    except:
-        pass
+
+    if not (message.reply_to_message and chat_id in in_game_chat_id):
+        return
+
+    game_data = in_game_chat_id[chat_id]
+    question = game_data["question"]
+    category = game_data["category"]
+    end_time = game_data["endtime"]
+    id_msg = game_data["id_msg"]
+
+    if int(message.reply_to_message.id) != int(id_msg):
+        return
+
+    nama = message.from_user.first_name
+    if message.from_user.last_name:
+        nama += f" {message.from_user.last_name}"
+    mention = await mention_html(nama, message.from_user.id)
     
+    jawab_user = message.text.strip().lower()
+
+    if category != "FAMILY 100":
+        if jawab_user == question["jawaban"].strip().lower():
+            format_jawab = f"Jawaban {mention} benar!\n"
+            jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
+            await handler_choice_game(chat_id, category, jawab=True)
+            await asyncio.sleep(2)
+            await bot.delete_messages(chat_id, jawab.id)
+    else:
+        jawaban = question["jawaban"]
+        if jawab_user in jawaban:
+            if chat_id not in jawaban_family100:
+                jawaban_family100[chat_id] = {}
+            if jawab_user not in jawaban_family100[chat_id]:
+                jawaban_family100[chat_id][jawab_user] = mention
+                await handler_choice_game(chat_id, category, jawab=True)
+                await bot.delete_messages(chat_id, id_msg)
+                await bot.send_message(OWNER_ID, f"{jawaban_family100}\n\npesan family 100 masuk jawaban")
+    
+    if datetime.now() > end_time:
+        await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
+        await handler_choice_game(chat_id, category)
+
+
     # endtotal ketika tidak ada permainan selama 10 menit
-    try:
-        await handler_endtotal()
-    except:
-        pass
+    await handler_endtotal()
