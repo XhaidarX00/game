@@ -191,14 +191,14 @@ async def handler_choice_game(chat_id, category, jawab=None):
         else:
             return await handler_choice_game(chat_id, category)
         
+        if in_game_chat_id_jawab.get(chat_id, None):
+            id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
+            if id_msg:
+                await bot.delete_messages(chat_id, id_msg)
+                    
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
         if category != "FAMILY 100":
-            if in_game_chat_id_jawab.get(chat_id, None):
-                id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
-                if id_msg:
-                    await bot.delete_messages(chat_id, id_msg)
-                    
             await asyncio.sleep(5)
             await bot.delete_messages(chat_id, id_msg_jwb)
             return await handler_choice_game(chat_id, category)
@@ -206,7 +206,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
             in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
         
         start_time = datetime.now()
-        end_time = start_time + timedelta(minutes=3)
+        end_time = start_time + timedelta(minutes=2)
         in_game_chat_id[chat_id]['endtime'] = end_time
         
         return
@@ -233,7 +233,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
             clue = question['tipe']
             format_text += f"Clue: {clue}\n"
             
-        format_text += f"\nwaktumu 3 menit untuk menjawab!!" 
+        format_text += f"\nwaktumu 2 menit untuk menjawab!!" 
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
         
@@ -245,7 +245,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg = send_msg.id
         
-    end_time_total = start_time + timedelta(minutes=10)
+    end_time_total = start_time + timedelta(minutes=5)
     in_game_chat_id[chat_id] = {
         'soal': soal,
         'category': category,
@@ -272,7 +272,7 @@ async def handler_endtotal():
             if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
                 del in_game_chat_id_jawab[chat_id]
                 
-            await bot.send_message(chat_id, "<b>⏰ Waktu tunggu 10 menit telah habis!\nPermainan dihentikan total!!</b>", protect_content=True)
+            await bot.send_message(chat_id, "<b>⏰ Waktu tunggu 5 menit telah habis!\nPermainan dihentikan total!!</b>", protect_content=True)
             del in_game_chat_id[chat_id]
             
             return True
