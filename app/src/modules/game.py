@@ -514,13 +514,16 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
+            await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
+            
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
             if jawab_user not in jawaban_family100[chat_id]:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await handler_choice_game(chat_id, category, jawab=True)
                 await bot.delete_messages(chat_id, id_msg)
-                await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
+                
+        await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
     
     if datetime.now() > end_time:
         await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
