@@ -129,8 +129,10 @@ async def paginate_categories(client: Client, callback_query):
 async def show_categori_excecute(client: Client, callback_query):
     global in_game_chat_id
     chat_id=callback_query.message.chat.id
+    msg_id = callback_query.message.id
     category_idx = int(callback_query.data.split("_")[1])
     category = categories[category_idx]
+    await bot.delete_messages(chat_id, msg_id)
     await handler_choice_game(chat_id, category)
     
 
@@ -197,8 +199,8 @@ async def handler_choice_game(chat_id, category, jawab=None):
                 if id_msg:
                     await bot.delete_messages(chat_id, id_msg)
                     
-            in_game_chat_id_jawab[chat_id] = id_msg_jwb
             await asyncio.sleep(5)
+            await bot.delete_messages(chat_id, id_msg_jwb)
             return await handler_choice_game(chat_id, category)
         else:
             in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
@@ -210,6 +212,12 @@ async def handler_choice_game(chat_id, category, jawab=None):
         return
     
     else:
+        if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
+            del in_game_chat_id_jawab[chat_id]
+        
+        if len(jawaban_family100) != 0 and jawaban_family100.get(chat_id, None):
+            del jawaban_family100[chat_id]
+            
         question = get_random_question(category)
         if category != "TEBAK GAMBAR":
             soal = question['soal']
@@ -246,13 +254,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         'endtime': end_time,
         'endtimetotal': end_time_total
     }
-
-    if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
-        del in_game_chat_id_jawab[chat_id]
-    
-    if len(jawaban_family100) != 0 and jawaban_family100.get(chat_id, None):
-        del jawaban_family100[chat_id]
-        
+   
     return
 
 
