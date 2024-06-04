@@ -286,7 +286,7 @@ async def handler_delete_inkata(chat_id):
 async def skip(client, message: Message):
     global in_game_chat_id
     chat_id = message.chat.id
-    if in_game_chat_id[chat_id]:
+    if chat_id in in_game_chat_id:
         category = in_game_chat_id[chat_id]['category']
         await handler_choice_game(chat_id, category)
     else:
@@ -297,7 +297,7 @@ async def skip(client, message: Message):
 async def nyerah(client, message: Message):
     global in_game_chat_id
     chat_id = message.chat.id
-    if in_game_chat_id[chat_id]:
+    if chat_id in in_game_chat_id:
         category = in_game_chat_id[chat_id]['category']
         if category != "FAMILY 100":
             await handler_choice_game(chat_id, category, jawab=True)
