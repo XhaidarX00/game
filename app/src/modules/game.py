@@ -515,7 +515,6 @@ async def check_answer(client, message: Message):
             format_jawab = f"Jawaban {mention} benar!\n"
             jawab = await bot.send_message(chat_id, format_jawab, protect_content=True)
             await handler_choice_game(chat_id, category, jawab=True)
-            await asyncio.sleep(2)
             await bot.delete_messages(chat_id, jawab.id)
     else:
         jawaban = question["jawaban"]
@@ -527,9 +526,8 @@ async def check_answer(client, message: Message):
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
-                await asyncio.sleep(1)
                 await handler_choice_game(chat_id, category, jawab=True)
-                await asyncio.sleep(2)
+
             else:
                 pass
                 
