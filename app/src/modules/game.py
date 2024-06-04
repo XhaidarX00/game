@@ -186,13 +186,6 @@ async def handler_choice_game(chat_id, category, jawab=None):
                     format_text += f"{index + 1}. {user_key} [+1 {user_value}]\n"
                 else:
                     format_text += f"{index + 1}. \n"
-            
-            if len(jawaban_soal) == len(jawaban_family100):
-                send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
-                id_msg_jwb = send_msg_jawab.id
-                in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
-                await asyncio.sleep(2)
-                return await handler_choice_game(chat_id, category)
         else:
             return await handler_choice_game(chat_id, category)
         
@@ -545,13 +538,18 @@ async def check_answer(client, message: Message):
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
                 await handler_choice_game(chat_id, category, jawab=True)
-
             else:
                 pass
                 
+        if len(jawaban) == len(jawaban_family100):
+            await asyncio.sleep(2)
+            id_msg_jwb = in_game_chat_id[chat_id]['id_msg']
+            await bot.delete_messages(chat_id, id_msg_jwb)
+            return await handler_choice_game(chat_id, category)
+            
             # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
-        await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
+        # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
     
     if datetime.now() > end_time:
         await client.send_message(chat_id, "<b>⏰ Waktu 3 menit telah habis!</b>", protect_content=True)
