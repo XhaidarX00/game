@@ -166,6 +166,7 @@ from datetime import datetime, timedelta
 async def handler_choice_game(chat_id, category, jawab=False):
     global in_game_chat_id, jawaban_family100
     format_text = None
+    id_msg = None
     if jawab:
         question = in_game_chat_id[chat_id]['question']
         if category == "TEBAKAN CAK LONTONG":
@@ -232,14 +233,15 @@ async def handler_choice_game(chat_id, category, jawab=False):
 
         send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg = send_msg.id
-        end_time_total = start_time + timedelta(minutes=10)
-        in_game_chat_id[chat_id] = {
-            'category': category,
-            'id_msg': id_msg,
-            'question': question,
-            'endtime': end_time,
-            'endtimetotal': end_time_total
-        }
+        
+    end_time_total = start_time + timedelta(minutes=10)
+    in_game_chat_id[chat_id] = {
+        'category': category,
+        'id_msg': id_msg,
+        'question': question,
+        'endtime': end_time,
+        'endtimetotal': end_time_total
+    }
         
     return
 
