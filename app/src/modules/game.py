@@ -166,7 +166,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
     format_text = None
     id_msg = None
     soal = None
-    await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}\n\n{jawaban_family100}")
+    # await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}\n\n{jawaban_family100}")
     if jawab:
         question = in_game_chat_id[chat_id]['question']
         if category == "TEBAKAN CAK LONTONG":
