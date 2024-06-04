@@ -195,14 +195,17 @@ async def handler_choice_game(chat_id, category, jawab=None):
         
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
-        if in_game_chat_id_jawab.get(chat_id, None):
-            id_msg = in_game_chat_id_jawab[chat_id]
-            if id_msg:
-                await bot.delete_messages(chat_id, id_msg)
-                
-        in_game_chat_id_jawab[chat_id] = id_msg_jwb
         if category != "FAMILY 100":
+            if in_game_chat_id_jawab.get(chat_id, None):
+                id_msg = in_game_chat_id_jawab[chat_id]
+                if id_msg:
+                    await bot.delete_messages(chat_id, id_msg)
+                    
+            in_game_chat_id_jawab[chat_id] = id_msg_jwb
             return await handler_choice_game(chat_id, category)
+        else:
+            in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
+            
         return
     
     else:
@@ -526,6 +529,7 @@ async def check_answer(client, message: Message):
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
+                await asyncio.sleep(1)
                 await handler_choice_game(chat_id, category, jawab=True)
 
             else:
