@@ -482,7 +482,7 @@ async def handler_motivasi(client, message):
 async def check_answer(client, message: Message):
     global in_game_chat_id, jawaban_family100
     chat_id = message.chat.id
-    try: 
+    try:
         if message.reply_to_message and chat_id in in_game_chat_id:
             question = in_game_chat_id[chat_id]["question"]
             category = in_game_chat_id[chat_id]["category"]
