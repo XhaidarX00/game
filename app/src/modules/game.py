@@ -165,6 +165,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
     global in_game_chat_id, jawaban_family100, in_game_chat_id_jawab
     format_text = None
     id_msg = None
+    soal = None
     await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}\n\n{jawaban_family100}")
     if jawab:
         question = in_game_chat_id[chat_id]['question']
@@ -238,6 +239,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         
     end_time_total = start_time + timedelta(minutes=10)
     in_game_chat_id[chat_id] = {
+        'soal': soal,
         'category': category,
         'id_msg': id_msg,
         'question': question,
@@ -492,11 +494,7 @@ async def handler_motivasi(client, message):
 
 
 
-async def handler_family100(chat_id, jawaban_soal, jawaban_user):
-    global in_game_chat_id
-    game_data = in_game_chat_id[chat_id]
-    soal = game_data['soal']
-    
+async def handler_family100(chat_id, soal, jawaban_soal, jawaban_user):
     format_text = f"💁 {soal}?\n"
     for index, value in enumerate(jawaban_soal):
         user_key = list(jawaban_user.keys())[index] if index < len(jawaban_user) else None
@@ -548,17 +546,18 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
+            soal = game_data["soal"]
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
                 await bot.delete_messages(chat_id, id_msg)
-                await handler_family100(chat_id, jawaban, jawaban_family100[chat_id])
+                await handler_family100(chat_id, soal, jawaban, jawaban_family100[chat_id])
                 
             list_jawaban = list(jawaban_family100[chat_id].keys())
             if jawab_user not in list_jawaban:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await bot.delete_messages(chat_id, id_msg)
                 await asyncio.sleep(1)
-                await handler_family100(chat_id, jawaban, jawaban_family100[chat_id])
+                await handler_family100(chat_id, soal, jawaban, jawaban_family100[chat_id])
             else:
                 pass
                 
