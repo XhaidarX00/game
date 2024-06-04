@@ -193,7 +193,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         id_msg_jwb = send_msg_jawab.id
         if category != "FAMILY 100":
             if in_game_chat_id_jawab.get(chat_id, None):
-                id_msg = in_game_chat_id_jawab[chat_id]
+                id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
                 if id_msg:
                     await bot.delete_messages(chat_id, id_msg)
                     
