@@ -169,20 +169,23 @@ async def handler_choice_game(chat_id, category, jawab=None):
     if jawab:
         question = in_game_chat_id[chat_id]['question']
         soal = question['soal']
+        jawaban = question['jawaban']
         format_text = f"💁 {soal}?\n"
         if category == "TEBAKAN CAK LONTONG":
-            jawaban = question['jawaban']
             deskripsi = question['deskripsi']
-            format_text = f"Jawaban: {jawaban}\n{deskripsi}"
+            format_text = f"Jawaban: {jawaban}\n\n{deskripsi}"
         elif category == "FAMILY 100":
             jawaban_user = jawaban_family100[chat_id]
-            jawaban_soal = question['jawaban']
-            for index, value in enumerate(jawaban_soal):
+            jawaban = question['jawaban']
+            for index, value in enumerate(jawaban):
                 if value in jawaban_user:
                     user_mention = jawaban_user[value]
                     format_text += f"{index + 1}. {value} [+1 {user_mention}]\n"
                 else:
                     format_text += f"{index + 1}. \n"
+        elif category == "SUSUN KATA":
+            clue = question['tipe']
+            format_text += f"Clue: {clue}\n\nJawaban: {jawaban}\n"
         else:
             return await handler_choice_game(chat_id, category)
         
