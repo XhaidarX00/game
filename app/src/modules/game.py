@@ -524,14 +524,14 @@ async def check_answer(client, message: Message):
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
                 
-            if jawab_user not in jawaban_family100[chat_id]:
+            if jawab_user not in list(jawaban_family100[chat_id].keys()):
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await handler_choice_game(chat_id, category, jawab=True)
                 await bot.delete_messages(chat_id, id_msg)
             else:
                 await bot.send_message(OWNER_ID, f" jawban user in jawaban family {jawab_user}")
                 
-            await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
+            # await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
         await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
     
