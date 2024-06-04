@@ -198,6 +198,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
                     await bot.delete_messages(chat_id, id_msg)
                     
             in_game_chat_id_jawab[chat_id] = id_msg_jwb
+            await asyncio.sleep(5)
             return await handler_choice_game(chat_id, category)
         else:
             in_game_chat_id[chat_id]['id_msg'] = id_msg_jwb
@@ -304,8 +305,6 @@ async def nyerah(client, message: Message):
         category = in_game_chat_id[chat_id]['category']
         if category != "FAMILY 100":
             await handler_choice_game(chat_id, category, jawab=True)
-        await asyncio.sleep(5)
-        await handler_choice_game(chat_id, category)
     else:
         return await bot.send_message(chat_id, "Permainan Belum Dimulai\nKetik /play untuk memulai!!", protect_content=True)
     
