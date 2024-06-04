@@ -166,8 +166,8 @@ async def handler_choice_game(chat_id, category, jawab=False):
     global in_game_chat_id, jawaban_family100
     format_text = None
     id_msg = None
+    await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}")
     if jawab:
-        await bot.send_message(OWNER_ID, f"{jawab} \n\n{category}\n\n{chat_id}")
         question = in_game_chat_id[chat_id]['question']
         if category == "TEBAKAN CAK LONTONG":
             jawaban = question['jawaban']
