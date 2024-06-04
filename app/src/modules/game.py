@@ -195,7 +195,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
         
         send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg_jwb = send_msg_jawab.id
-        if in_game_chat_id_jawab[chat_id]:
+        if in_game_chat_id_jawab.get(chat_id, None):
             id_msg = in_game_chat_id_jawab[chat_id].get('id_msg_jwb', None)
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
@@ -244,8 +244,9 @@ async def handler_choice_game(chat_id, category, jawab=None):
         'endtime': end_time,
         'endtimetotal': end_time_total
     }
-    
-    if in_game_chat_id_jawab[chat_id]:
+
+    id_msg_jwb_ = in_game_chat_id_jawab.get(chat_id, None)
+    if id_msg_jwb_:
         del in_game_chat_id_jawab[chat_id]
         
     return
@@ -519,14 +520,18 @@ async def check_answer(client, message: Message):
     else:
         jawaban = question["jawaban"]
         if jawab_user in jawaban:
-            await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
             
             if chat_id not in jawaban_family100:
                 jawaban_family100[chat_id] = {jawab_user: mention}
+                
             if jawab_user not in jawaban_family100[chat_id]:
                 jawaban_family100[chat_id].update({jawab_user: mention})
                 await handler_choice_game(chat_id, category, jawab=True)
                 await bot.delete_messages(chat_id, id_msg)
+            else:
+                await bot.send_message(OWNER_ID, f" jawban user in jawaban family {jawab_user}")
+                
+            await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100 masuk jawaban")
                 
         await bot.send_message(OWNER_ID, f"{jawaban}\n\n{jawab_user}\n\n{jawaban_family100}\n\npesan family 100")
     
