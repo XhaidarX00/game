@@ -31,6 +31,8 @@ emoticons = [
 
 in_game_chat_id = {}
 in_kata_kata_chat_id = {}
+jawaban_family100 = {}
+in_game_chat_id_jawab = {}
 
 # Daftar kategori Game
 categories = [
@@ -159,10 +161,6 @@ async def handler_play(client, message):
     
     
 
-jawaban_family100 = {}
-in_game_chat_id_jawab = {}
-from datetime import datetime, timedelta
-
 async def handler_choice_game(chat_id, category, jawab=None):
     global in_game_chat_id, jawaban_family100, in_game_chat_id_jawab
     format_text = None
@@ -247,6 +245,9 @@ async def handler_choice_game(chat_id, category, jawab=None):
 
     if len(in_game_chat_id_jawab) != 0 and in_game_chat_id_jawab.get(chat_id, None):
         del in_game_chat_id_jawab[chat_id]
+    
+    if len(jawaban_family100) != 0 and jawaban_family100.get(chat_id, None):
+        del jawaban_family100[chat_id]
         
     return
 
@@ -298,7 +299,9 @@ async def nyerah(client, message: Message):
     chat_id = message.chat.id
     if in_game_chat_id[chat_id]:
         category = in_game_chat_id[chat_id]['category']
-        await handler_choice_game(chat_id, category, jawab=True)
+        if category != "FAMILY 100":
+            await handler_choice_game(chat_id, category, jawab=True)
+        await asyncio.sleep(2)
         await handler_choice_game(chat_id, category)
     else:
         pass
