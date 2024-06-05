@@ -526,8 +526,9 @@ async def handler_motivasi(client, message):
 async def check_answer(client, message: Message):
     global in_game_chat_id, jawaban_family100
     chat_id = message.chat.id
-    
     if chat_id in in_game_chat_id:
+        game_data = in_game_chat_id[chat_id]
+        category = game_data["category"]
         game_data = in_game_chat_id[chat_id]
         end_time = game_data["endtime"]
         if datetime.now() > end_time:
