@@ -192,7 +192,11 @@ async def handler_choice_game(chat_id, category, jawab=None):
     soal = None
     if jawab:
         question = in_game_chat_id[chat_id]['question']
-        soal = question['soal']
+        if category != "TEBAK GAMBAR":
+            soal = question['soal']
+        else:
+            soal = question['img']
+            
         jawaban = question['jawaban']
         format_text = f"💁 {soal}?\n"
         if category == "TEBAKAN CAK LONTONG":
@@ -200,7 +204,6 @@ async def handler_choice_game(chat_id, category, jawab=None):
             format_text = f"Jawaban: {jawaban}\n\n{deskripsi}\n"
         elif category == "FAMILY 100":
             jawaban_user = jawaban_family100[chat_id]
-            jawaban = question['jawaban']
             for index, value in enumerate(jawaban):
                 if value in jawaban_user:
                     user_mention = jawaban_user[value]
@@ -210,11 +213,18 @@ async def handler_choice_game(chat_id, category, jawab=None):
         elif category == "SUSUN KATA":
             clue = question['tipe']
             format_text += f"Clue: {clue}\n\nJawaban: {jawaban}\n"
+        elif category == "TEBAK GAMBAR":
+            format_text = f"GAME {category}\n\n"
+            format_text += f"Jawaban: {jawaban}"
         else:
             return await handler_choice_game(chat_id, category)
         
-        await delete_message(chat_id)           
-        send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
+        await delete_message(chat_id) 
+        if category == "SUSUN KATA":          
+            send_msg_jawab = await bot.send_photo(chat_id, soal, format_text, protect_content=True)
+        else:
+            send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
+            
         id_msg_jwb = send_msg_jawab.id
         if category != "FAMILY 100":
             await asyncio.sleep(5)
