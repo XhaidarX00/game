@@ -363,7 +363,7 @@ async def help(client, message: Message):
         "<b>`◉` Game : </b>\n"
         "  /game - untuk memulai game\n"
         "  /skip - untuk next ke pertanyaan selanjutnya\n"
-        "  /nyerah - untuk menyerah\n"
+        "  /nyerahh - untuk menyerah\n"
         "  /endgame - untuk menyelesaikan permainan\n"
         "  /helpp - untuk memberikan menu bantuan\n"
         "  /truth - untuk memulai game truth\n"
@@ -463,8 +463,8 @@ async def handler_random_truth_dare(client, message):
 
 # bucin
 
-@bot.on_message(filters.command("gombal"))
-async def handler_gombal(client, message):
+@bot.on_message(filters.command("bucin"))
+async def handler_bucin(client, message):
     global in_game_chat_id, in_kata_kata_chat_id
     chat_id = message.chat.id
     user_id = message.from_user.id
@@ -480,7 +480,7 @@ async def handler_gombal(client, message):
     kata_kata = random.choice(data)
     mention = await mention_html(name, user_id)
     emot = random.choice(emoticons)
-    format_text = f"Gombal untuk {mention} {emot}\n\n{kata_kata}"
+    format_text = f"Bucin untuk {mention} {emot}\n\n{kata_kata}"
     send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
     
     await handler_delete_inkata(chat_id)
