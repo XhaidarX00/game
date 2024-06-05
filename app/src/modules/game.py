@@ -6,6 +6,7 @@ from app import bot, OWNER_ID, udb, load_data_json
 
 import asyncio
 import random
+import requests
 from datetime import datetime, timedelta
 
 
@@ -168,6 +169,20 @@ async def delete_message(chat_id):
         id_msg = in_game_chat_id_jawab[chat_id]['id_msg']
         if id_msg:
             await bot.delete_messages(chat_id, id_msg)
+
+
+
+async def handler_download_media(link):
+    image_url = link
+    image_path = "downloaded_image.jpg"
+
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        with open(image_path, 'wb') as file:
+            file.write(response.content)
+        return image_path
+    else:
+        return
             
 
 async def handler_choice_game(chat_id, category, jawab=None):
@@ -224,19 +239,24 @@ async def handler_choice_game(chat_id, category, jawab=None):
         question = get_random_question(category)
         if category != "TEBAK GAMBAR":
             soal = question['soal']
+            
+            format_text = f"GAME {category}\n\n💁 {soal}?\n"
+            if category == "FAMILY 100":
+                jawaban = question['jawaban']
+                for count in range(len(jawaban)):
+                    format_text += f"{count + 1}.\n"
+            elif category == "SUSUN KATA":
+                clue = question['tipe']
+                format_text += f"Clue: {clue}\n"
+            format_text += f"\nwaktumu 2 menit untuk menjawab!!"
+            send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
         else:
             soal = question['img']
-            
-        format_text = f"GAME {category}\n\n💁 {soal}?\n"
-        if category == "FAMILY 100":
-            jawaban = question['jawaban']
-            for count in range(len(jawaban)):
-                format_text += f"{count + 1}.\n"
-        elif category == "SUSUN KATA":
-            clue = question['tipe']
-            format_text += f"Clue: {clue}\n"
-            
-        format_text += f"\nwaktumu 2 menit untuk menjawab!!" 
+            soal = await handler_download_media(soal)
+            format_text = f"GAME {category}\n"
+            format_text += f"waktumu 2 menit untuk menjawab!!"
+            send_msg = await bot.send_photo(chat_id, soal, format_text, protect_content=True)
+             
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=3)
         
@@ -245,7 +265,6 @@ async def handler_choice_game(chat_id, category, jawab=None):
             if id_msg:
                 await bot.delete_messages(chat_id, id_msg)
 
-        send_msg = await bot.send_message(chat_id, format_text, protect_content=True)
         id_msg = send_msg.id
         
     end_time_total = start_time + timedelta(minutes=5)
