@@ -192,11 +192,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
     soal = None
     if jawab:
         question = in_game_chat_id[chat_id]['question']
-        if category != "TEBAK GAMBAR":
-            soal = question['soal']
-        else:
-            soal = question['img']
-            
+        soal = question['soal']    
         jawaban = question['jawaban']
         format_text = f"💁 {soal}?\n"
         if category == "TEBAKAN CAK LONTONG":
@@ -220,11 +216,7 @@ async def handler_choice_game(chat_id, category, jawab=None):
             return await handler_choice_game(chat_id, category)
         
         await delete_message(chat_id) 
-        if category == "SUSUN KATA":          
-            send_msg_jawab = await bot.send_photo(chat_id, soal, format_text, protect_content=True)
-        else:
-            send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)
-            
+        send_msg_jawab = await bot.send_message(chat_id, format_text, protect_content=True)    
         id_msg_jwb = send_msg_jawab.id
         if category != "FAMILY 100":
             await asyncio.sleep(5)
@@ -333,7 +325,7 @@ async def skip(client, message: Message):
         return await bot.send_message(chat_id, "Permainan Belum Dimulai\nKetik /play untuk memulai!!", protect_content=True)
     
 
-@bot.on_message(filters.command("nyerah"))
+@bot.on_message(filters.command("nyerahh"))
 async def nyerah(client, message: Message):
     global in_game_chat_id
     chat_id = message.chat.id
@@ -376,10 +368,10 @@ async def help(client, message: Message):
         "  /helpp - untuk memberikan menu bantuan\n"
         "  /truth - untuk memulai game truth\n"
         "  /dare - untuk memulai game dare\n"
-        "  /rendom - untuk memilih random truth atau dare\n"
+        "  /random - untuk memilih random truth atau dare\n"
         
         "\n<b>`◉` Kata - Kata : </b>\n"
-        "  /gombal - kata - kata gombal untuk kamu\n"
+        "  /bucin - kata - kata gombal untuk kamu\n"
         "  /motivasi - kata - kata motivasi untuk kamu\n"
         
     )
