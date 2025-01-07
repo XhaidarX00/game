@@ -32,16 +32,16 @@ To set up the bot, you need to configure the following variables:
 
 ```python
 # Redis Configuration
-redis_host = 'redis-14475.c1.asia-northeast1-1.gce.redns.redis-cloud.com'
-redis_port = 14475
-redis_password = '8Si6uTMmP8x5LLNFMZntWlv9nU8g7U07'
+redis_host = 
+redis_port = 
+redis_password = 
 
 # Bot Configuration
 session_name_bot = 'haidar_multi_game_bot'
-API_ID = 18207302
-API_HASH = 'a2526b0eea73aa82080ab181f03e0149'
-BOT_TOKEN = '6369184612:AAHocf8RecdUJI4n9GF-H0iRpRaVeEMbD1M'
-OWNER_ID = 2099942562
+API_ID =
+API_HASH = 
+BOT_TOKEN = 
+OWNER_ID = 
 ```
 
 Replace the Redis credentials and bot API keys with your own configuration.
