@@ -147,10 +147,10 @@ class RedisCRUD:
 
 
 # Ganti nilai host, port, dan password sesuai dengan konfigurasi Redis Anda
-redis_host = 'redis-14475.c1.asia-northeast1-1.gce.redns.redis-cloud.com'
-redis_port = 14475
+redis_host = 
+redis_port = 
 # redis-14475.c1.asia-northeast1-1.gce.redns.redis-cloud.com:14475
-redis_password = '8Si6uTMmP8x5LLNFMZntWlv9nU8g7U07'
+redis_password = 
 
 # Buat objek RedisCRUD dengan koneksi Redis
 dbredis = RedisCRUD(redis_host, redis_port, redis_password)
